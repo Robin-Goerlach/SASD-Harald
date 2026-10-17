@@ -22,6 +22,7 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 - [Interface preview](#interface-preview)
 - [Why HARALD?](#why-harald)
 - [Current status](#current-status)
+- [Architecture and design](#architecture-and-design)
 - [Goals and design principles](#goals-and-design-principles)
 - [Supported media: target scope](#supported-media-target-scope)
 - [Planned functionality](#planned-functionality)
@@ -75,6 +76,12 @@ HARALD is **not yet a working library application**.
 | Public release | None |
 
 **Please do not interpret feature descriptions, example workflows, API concepts, or the roadmap below as promises of currently shipping behavior.** Progress will be documented in commits, GitHub issues, release notes, and eventually versioned technical documentation.
+
+## Architecture and design
+
+The proposed modular architecture, extensibility model, security boundaries, domain entities, deployment options, ADR backlog, and acceptance gates are documented in the **[HARALD Architecture Document](docs/architecture/ARCHITECTURE.md)** (German; draft v0.1). It intentionally keeps the implementation language and UI framework open while defining durable contracts for cataloging, inventory, lending, digital assets, and future integrations.
+
+This document describes a **planned architecture**, not features already implemented or released.
 
 ## Goals and design principles
 
