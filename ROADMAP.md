@@ -143,9 +143,13 @@ This is a **dependency illustration**. Parallel development is possible where in
 **Deliverables**
 - [ ] Compile a minimal domain module with **no** ORM/UI/network imports.
 - [ ] Define application-use-case interfaces and persistence/storage ports.
+- [ ] Design a **configurable backend mediation layer** with a UI-facing application facade, storage profiles, capability handshake, profile validation and adapter contracts for JSON/SQLite/remote SQL/remote HARALD REST (see [storage architecture](docs/architecture/STORAGE_PROVIDERS.md)).
+- [ ] Decide **ADR-0004** and which providers are required by R1; preparing an adapter interface is not equivalent to shipping all drivers.
 - [ ] Establish deterministic formatting, lint/static analysis, and test commands.
 - [ ] Create automated CI jobs for the actually supported stack.
 - [ ] Set up project configuration with secret handling and safe defaults.
+- [ ] Allow authorized backend configuration **through UI and versioned configuration file** with one effective value and explicit admin overrides; never expose SQL passwords to browsers.
+- [ ] Distinguish 'open existing backend profile' from 'migrate catalog to another backend' in the UX and tests.
 - [ ] Establish database migrations, test fixtures, logging conventions, and baseline security scans.
 - [ ] Document local development and clean installation instructions.
 - [ ] Introduce contract/architecture tests detecting forbidden layer references.
@@ -254,6 +258,7 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 
 - [ ] CSV/UTF-8 import/export with field mapping.
 - [ ] Versioned JSON catalog export/import preserving relational identities.
+- [ ] Keep **JSON export/import** explicitly separate from a potential crash-safe **JSON persistence provider**; both require their own tests.
 - [ ] Validation previews, dry run and error reporting.
 - [ ] Source ID provenance and controlled duplicate matching.
 - [ ] Fault handling with no silent partial-loss success reports.
@@ -353,6 +358,7 @@ Candidate epics include:
 - Bibliographic interoperability: MARC21/MARCXML, SRU, Z39.50, authority data.
 - Serial publications and acquisition workflows.
 - LDAP/OIDC, richer role boundaries and location policies.
+- Verified alternative **PostgreSQL / MySQL / MariaDB / Oracle storage adapters** and their own schema/transaction/recovery suites, prioritized only after ADR-0004 and real demand.
 - PostgreSQL-backed server operation and validated higher concurrency.
 - Label and borrower-card printing; optional RFID/SIP2 hardware adapters.
 - Multi-site transfers and, only if needed, securely isolated multitenancy.
@@ -460,7 +466,7 @@ When a new media type, integration, client, or deployment request arrives:
 | --- | --- | --- |
 | Language/runtime/toolchain | Packaging, contributor accessibility, BSD feasibility | ADR-0001 (proposed) |
 | First executable UI | Desktop packaging versus local service/web model | Follow-up ADR |
-| Storage and concurrency | SQLite deployment correctness, migration to PostgreSQL | Follow-up ADR |
+| Storage and concurrency | User-configurable local JSON/SQLite, remote MySQL/PostgreSQL/Oracle and REST, concurrency, secure profiles, migration vs switching | [ADR-0004 (Proposed)](docs/architecture/adr/0004-configurable-persistence-and-remote-api.md) |
 | Public API approach | Stable external clients and errors | Follow-up ADR |
 | Media profile extensibility | Typed fields versus custom values | Follow-up ADR |
 | Plugin trust and isolation | Local process permissions and hostile inputs | Follow-up ADR |
@@ -475,6 +481,7 @@ Do not freeze all these decisions simultaneously. Resolve the ones blocking **M1
 - [README — current status and vision](README.md)
 - [Architecture proposal (German)](docs/architecture/ARCHITECTURE.md)
 - [Multi-language architecture and directory structure (German)](docs/architecture/MULTI_LANGUAGE.md)
+- [Configurable backend and remote REST architecture (German)](docs/architecture/STORAGE_PROVIDERS.md)
 - [Language implementation tracks](implementations/README.md)
 - [Shared contract/test planning](shared/README.md)
 - [Requirements baseline (German originals)](docs/requirements/README.md)

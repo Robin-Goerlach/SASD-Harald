@@ -9,6 +9,7 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 ## [Unreleased]
 
 ### Documentation
+- Added the user-requested configurable backend architecture with local JSON/SQLite, remote MySQL/MariaDB/PostgreSQL/Oracle and remote HARALD REST options; specified profile settings via UI/file, security constraints and migration checks. Introduced ADR-0004 as **Proposed**; no backend support was implemented.
 - Added draft requirements for tracking books intended for purchase and separate Dewey-compatible classification/shelfmark information, with acceptance cases and licensing notes. No runtime functionality has been added.
 - Prepared independent C#, C++, and Java directory tracks with documented empty source/test/example areas; added shared contract/fixture/conformance folders and a multilingual architecture note. **No executable implementations were introduced.**
 - Created an English introductory README describing the proposed catalog and multimedia-management platform.

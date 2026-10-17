@@ -43,6 +43,18 @@ A versioned configuration schema should be published **after** a stack is select
 
 **Never put credentials or access tokens in a committed configuration sample.** An example of a setting is not proof it is implemented.
 
+## 2.1 Configurable data sources (new architecture requirement)
+
+HARALD should offer **named backend profiles** editable through the administrative UI or a versioned configuration file, as specified in [STORAGE_PROVIDERS.md](../architecture/STORAGE_PROVIDERS.md) and the still-**Proposed** [ADR-0004](../architecture/adr/0004-configurable-persistence-and-remote-api.md).
+
+The requested modes are local JSON, local SQLite, remote MySQL/MariaDB, remote PostgreSQL, remote Oracle and a remote HARALD REST server. Each provider must be installed and tested to appear as a **usable** choice. A browser never receives raw remote database credentials.
+
+On a shared HARALD server, backend configuration is an **administrator-controlled instance setting**, not a per-reader user preference. A local single-user application may let its owner select the profile directly.
+
+Editing a profile, activating another existing profile, and **migrating data between profiles** are independent operations. A migration requires a validated backup/export, destination compatibility, asset/rights transfer, integrity checks and rollback plan. JSON snapshots need documented single-writer and crash-consistency behavior; each remote SQL engine needs vendor-specific schema/transaction tests.
+
+**No production config schema or working backend chooser is implemented yet.**
+
 ## 3. Installation and supported platforms
 
 Before any production release, publish for each supported OS:

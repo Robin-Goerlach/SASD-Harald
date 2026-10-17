@@ -107,6 +107,19 @@ DB, files, metadata, external services (adapters)
 
 An extension point is valuable only if it has a concrete consumer. Avoid elaborate plugin SDKs before the catalog works.
 
+### Storage and backend mediation requirement
+
+A new user request explicitly requires **storage-location selection through UI or configuration file**, supporting local JSON, local SQLite, remote MySQL/MariaDB, PostgreSQL, Oracle and HARALD-compatible remote REST as **possible adapters**.
+
+Read [STORAGE_PROVIDERS.md](docs/architecture/STORAGE_PROVIDERS.md) and [ADR-0004](docs/architecture/adr/0004-configurable-persistence-and-remote-api.md). Do not pretend these connectors are already implemented.
+
+- UI calls a unified application facade, not SQL tables or direct local JSON files.
+- For JSON/SQLite/SQL, the local or trusted HARALD application layer enforces business invariants; persistence remains a port.
+- For remote REST, the **remote HARALD server** owns auth, authorization and transactions. Do not present REST as an untrusted generic SQL repository.
+- Config profile edit/activate/migrate must be distinct and protected against unauthorized changes.
+- Never deliver DB credentials to a browser; use secret references and TLS validation.
+- An implemented provider must pass persistence, loan-concurrency, negative security, migration and backup/restore tests before advertising it.
+
 ## 5. Workflow for substantial tasks
 
 **Inspect → plan → implement → verify → document → report.**

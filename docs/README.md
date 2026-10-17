@@ -13,6 +13,7 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | Automation and engineering | [AGENTS.md](../AGENTS.md) | Invariants, module boundaries, coding and evidence rules |
 | Architecture (German) | [ARCHITECTURE.md](architecture/ARCHITECTURE.md) | Core design, portability, extension model, rights, testing and open decisions |
 | Multi-language architecture (German) | [MULTI_LANGUAGE.md](architecture/MULTI_LANGUAGE.md) | C#, C++, Java layout; one backend vs independent implementations; contract boundaries |
+| Configurable data backends (German) | [STORAGE_PROVIDERS.md](architecture/STORAGE_PROVIDERS.md) | Local JSON/SQLite, remote MySQL/PostgreSQL/Oracle, REST, profile configuration and migration |
 | Language tracks | [implementations](../implementations/README.md) | Empty source/test directories with local guidance; no language chosen |
 | Shared cross-language material | [shared](../shared/README.md) | Future contracts, fixture samples and conformance checks |
 | Decisions | [ADR index](architecture/adr/README.md) | Proposed/accepted decisions and decision template |

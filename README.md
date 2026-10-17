@@ -23,6 +23,7 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 - [Why HARALD?](#why-harald)
 - [Current status](#current-status)
 - [Architecture and design](#architecture-and-design)
+- [Configurable data storage](#configurable-data-storage)
 - [Multiple implementation languages](#multiple-implementation-languages)
 - [Project documentation](#project-documentation)
 - [Planned acquisitions and shelf classification](#planned-acquisitions-and-shelf-classification)
@@ -86,6 +87,16 @@ HARALD is **not yet a working library application**.
 The proposed modular architecture, extensibility model, security boundaries, domain entities, deployment options, ADR backlog, and acceptance gates are documented in the **[HARALD Architecture Document](docs/architecture/ARCHITECTURE.md)** (German; draft v0.1). It intentionally keeps the implementation language and UI framework open while defining durable contracts for cataloging, inventory, lending, digital assets, and future integrations.
 
 This document describes a **planned architecture**, not features already implemented or released.
+
+## Configurable data storage
+
+The architecture now explicitly plans a **user-configurable intermediary between the interface and storage**. An authorized user/administrator should be able to choose the active storage profile through the **application settings UI or a versioned configuration file**.
+
+Candidate backends include **local JSON**, **local SQLite**, **remote MySQL/MariaDB**, **remote PostgreSQL**, **remote Oracle**, and a **remote HARALD-compatible REST API**. Additional backends could be added through adapters. **These are requested architecture options, not implemented connectors.**
+
+The UI would use one application facade; the mediation layer would select either local/server-side business use cases with storage adapters or a remote HARALD application client. The remote REST server must enforce its own domain transactions and authorization; database passwords must not be sent to browsers. Selecting a different storage profile would **not** silently migrate data.
+
+See the detailed [German storage-provider design](docs/architecture/STORAGE_PROVIDERS.md) and [ADR-0004 (Proposed)](docs/architecture/adr/0004-configurable-persistence-and-remote-api.md). **Exactly which backends ship in V1 remains open.**
 
 ## Project documentation
 
@@ -420,8 +431,8 @@ The core business model should **not** import UI classes or rely on a metadata p
 
 ### Storage direction
 
-- **Initial planning option:** SQLite for straightforward local deployments, subject to performance and concurrency tests.
-- **Later option:** PostgreSQL for installations needing more sophisticated multi-user operation.
+- **Initial reference option:** local SQLite, subject to performance and concurrency tests; **local JSON** is a separate requested storage adapter requiring crash-safety and single-writer evaluation.
+- **Additional requested options:** remote MySQL/MariaDB, PostgreSQL, Oracle, and a HARALD-compatible REST application service (different transport/trust model). Availability depends on implementation and tests, not directory structure.
 - **Digital files:** Protected local storage with stable IDs, hashes, and controlled delivery.
 - **Search:** An interchangeable indexing strategy appropriate for offline and larger deployments.
 - **Migrations:** Explicit schema versions and tested upgrades, including failure recovery.

@@ -515,7 +515,7 @@ Ein Worker zeichnet Versuch, nächsten Zeitpunkt, Fehlerart und begrenzte Retrie
 
 ## 11.1 Vorschlag R1: SQLite (E)
 
-SQLite erfüllt die Anforderungen kleiner lokaler und LAN-Installationen gut, solange Schreibparallelität und Betriebsprofile getestet werden. Zielparameter als Ausgangspunkt: Foreign Keys aktiv, Transaktionen, Busy-Timeout, für geeignete lokale Dateisysteme WAL-Modus, klar dokumentierte Sicherungsverfahren. **SQLite über gewöhnliche Netzwerkdateifreigaben ist nicht der empfohlene zentrale Betriebsmodus**; im LAN greift nur der Serverprozess auf die lokale DB zu.
+SQLite erfüllt die Anforderungen kleiner lokaler und LAN-Installationen gut, solange Schreibparallelität und Betriebsprofile getestet werden. **Seit dem Nutzerwunsch einer per UI/Datei konfigurierbaren Datenhaltung ist SQLite nicht mehr die einzige vorgesehene Implementierungsform, sondern ein möglicher Referenzadapter.** Die gewünschte Auswahl umfasst lokale JSON-Dateien, lokale SQLite-Datenbanken, entfernte MySQL-/MariaDB-, PostgreSQL- und Oracle-Datenbanken sowie einen entfernten HARALD-REST-Dienst. Vollständige Details stehen in [STORAGE_PROVIDERS.md](STORAGE_PROVIDERS.md) und der noch vorgeschlagenen [ADR-0004](adr/0004-configurable-persistence-and-remote-api.md). Zielparameter als Ausgangspunkt: Foreign Keys aktiv, Transaktionen, Busy-Timeout, für geeignete lokale Dateisysteme WAL-Modus, klar dokumentierte Sicherungsverfahren. **SQLite über gewöhnliche Netzwerkdateifreigaben ist nicht der empfohlene zentrale Betriebsmodus**; im LAN greift nur der Serverprozess auf die lokale DB zu.
 
 Datenbank-Bausteine:
 
@@ -547,6 +547,22 @@ DB-Commit und Dateisystem-Umbenennung lassen sich üblicherweise **nicht** in ei
 ## 11.4 Datei- und Storage-Abstraktion
 
 `IAssetStore` liefert Operationen für temporären Upload, Commit/Finalize, Read-Streaming, Existenz- und Integritätsprüfung sowie kontrolliertes Löschen. Keine Fachlogik verwendet konkrete Verzeichnispfade. Späterer S3-kompatibler Speicher ist ein **eigener, separat zu testender Adapter**; Remote-Storage darf den Offline-Kern nicht zur Pflicht machen.
+
+## 11.5 Nutzerkonfigurierbare Backend-Vermittlungsschicht (neue Anforderung)
+
+Der Nutzer verlangt **eine explizite Vermittlung zwischen Oberfläche und Datenhaltung**, über die er den aktiven Speicherort **in der Oberfläche oder in einer Konfigurationsdatei** wählen kann. Die Backends umfassen lokale **JSON**- und **SQLite**-Speicherung, entfernte **MySQL/MariaDB**, **PostgreSQL**, **Oracle** und eine entfernte **REST-API**; weitere Provider müssen später ergänzbar bleiben. Der genaue V1-Umfang ist noch nicht freigegeben.
+
+**Verbindliche Zieltrennung der Entwurfsarchitektur:**
+
+- **Oberfläche** → einheitliche fachliche `IHaraldApplication`-Use-Cases; keine SQL-/Dateiformat-Details.
+- **BackendProfileManager/BackendResolver** → Profile, sichere Konfigurationsquelle, Connection-Test, Capability-/Schema-Prüfung, kontrollierter Aktivierungswechsel.
+- **Lokale/spezialisierte SQL-Provider** → HARALD führt Geschäftsregeln selbst aus und nutzt konkrete JSON-/SQLite-/SQL-Adapter hinter Persistence-Ports.
+- **Remote-REST-Provider** → Client sendet **fachliche Befehle** an den HARALD-Server; der Server prüft Rechte, gewährleistet Transaktionen und behält die Datenhoheit. REST ist nicht nur ein austauschbarer SQL-Treiber.
+- **Wechsel != Migration** → Profile öffnen bestehende Bibliotheken; vollständige Umzüge erfolgen über getrennte, geprüfte Export-/Import- und Backup-/Restore-Abläufe.
+- **Sicherheitsgrenze** → DB-Credentials nicht an Webbrowser ausliefern; Remote-Verbindungen mit TLS, minimalen Rechten, Secret-Store; Profileinstellung im Mehrbenutzerserver nur durch berechtigte Administratoren.
+- **Keine falsche Backendequivalenz** → JSON benötigt Crash-sicheres Locking/Snapshot/Journal und ggf. Einzelschreibergrenzen; jede Serverdatenbank benötigt eigene Transaktions-/SQL-Dialekt- und Migrationstests.
+
+Die ausführliche technische Spezifikation mit Mermaid-Gesamtdiagramm, Provider-Matrix, Beispielkonfiguration, UI-Konzept, Migration, Sicherheitsregeln und **BACK-AT-001 bis BACK-AT-020** ist in **[STORAGE_PROVIDERS.md](STORAGE_PROVIDERS.md)** hinterlegt. Die Entscheidung wird in [ADR-0004](adr/0004-configurable-persistence-and-remote-api.md) vorbereitet, aber noch nicht als akzeptiert ausgegeben.
 
 # 12. Digitale Dateien, Rechte und Vorschauen
 

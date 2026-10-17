@@ -38,8 +38,9 @@ Create ADRs as numbered Markdown files. Once published, do not reuse numbers or 
 | [ADR-0001](0001-technology-stack-and-platforms.md) | Implementation language, runtime, platforms and client packaging | **Proposed / decision open** | M1 (blocking) |
 | [ADR-0002](0002-modular-monolith-and-module-boundaries.md) | Modular monolith, dependency direction and domain boundaries | **Proposed / not ratified** | M1–M2 |
 | [ADR-0003](0003-catalog-identities-and-extension-model.md) | Work/Edition/Item/Asset identities and extension strategy | **Proposed / not ratified** | M2–M3 |
+| [ADR-0004](0004-configurable-persistence-and-remote-api.md) | User-configurable storage profiles; JSON/SQLite/remote SQL and remote HARALD REST | **Proposed / detailed requirements received, not ratified** | M1–M3 / R1+ |
 
-Next candidates when actual implementation requires them: initial database/storage and concurrency; UI client approach; public API versioning; digital asset authorization; metadata adapters; plugin permissions/isolation; supported package targets; backup/restore atomicity.
+Next candidates when actual implementation requires them: concrete JSON/SQL migration/storage mechanics under ADR-0004; UI client approach; public API versioning; digital asset authorization; metadata adapters; plugin permissions/isolation; supported package targets; backup/restore atomicity.
 
 ## Proposed review and decision process
 
