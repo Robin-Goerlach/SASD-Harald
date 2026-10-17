@@ -1,0 +1,85 @@
+# HARALD — Developer Setup and Engineering Workflow
+
+> Status: planning/pre-alpha. As of 2026-10-17 this repository has **no selected implementation stack, runnable source, package manager or build commands**.
+
+## Start here
+
+Read [AGENTS.md](../../AGENTS.md), [README.md](../../README.md), [ROADMAP.md](../../ROADMAP.md), [Architecture](../architecture/ARCHITECTURE.md), [ADR register](../architecture/adr/README.md) and [Test Strategy](../testing/TEST_STRATEGY.md).
+
+Current source tree contains planning/reference documents, artwork and the MIT license. Proposed code directories in the README are not existing files. Use GitHub Issues for concrete tasks; do not begin with an arbitrary framework scaffold while ADR-0001 is still Proposed.
+
+## Prerequisites — to be decided
+
+The accepted [ADR-0001](../architecture/adr/0001-technology-stack-and-platforms.md) should state:
+- Programming language, compiler/SDK and exact supported versions.
+- First supported Windows/Linux versions and tested optional BSD evaluation.
+- Required package/build tools, editor setup, runtime distribution strategy.
+- Database storage engine, setup/migration tool and concurrency limitations.
+- UI/API/CLI development loop, launch configuration and local ports if any.
+- Secret management, logging and secure development defaults.
+- License/dependency policy and update cadence.
+
+Until then, only basic Git is required for document contributions.
+
+### Clone the repository
+
+~~~sh
+git clone https://github.com/Robin-Goerlach/SASD-Harald.git
+cd SASD-Harald
+git status -sb
+~~~
+
+This merely retrieves the project. It **does not** run an application.
+
+## Proposed directory boundaries
+
+Potential logical boundaries are domain, application/use cases, infrastructure adapters, transport/API and UI. The exact structure depends on the chosen stack and accepted ADRs. Module boundaries matter more than names.
+
+A project layout should make it possible to:
+- Compile/test domain rules without UI, database or network.
+- Substitute a persistence or metadata provider adapter in a test.
+- Add media profiles without editing unrelated domain modules.
+- Use the same application use cases from alternative clients.
+- Keep protected digital files and secret configuration outside public roots.
+- Run database migrations from controlled, versioned tooling.
+- Locate unit, integration, contract, end-to-end, security and performance tests.
+
+## The first development slice
+
+Once ADR-0001 has been approved, prefer:
+1. Work and Edition identity with stable IDs.
+2. Two physical copies with unique item/inventory IDs and independent locations.
+3. A versioned database schema and repository adapter.
+4. Minimal UI/CLI or API calling application use cases.
+5. Real build/test/CI commands and Unicode fixtures.
+6. Verified export/restore of the sample model.
+7. Architectural and permission tests.
+
+Do not mix first-slice delivery with provider integrations, a full player or generic third-party plugin execution.
+
+## Review checklist for code changes
+
+- Problem, milestone, requirements and scope are clear.
+- Public interfaces expose DTOs, not ORM entities.
+- Domain and application do not import UI/DB frameworks.
+- Transaction, authorization, migration and file-storage impacts are explicit.
+- Non-obvious code is commented with the underlying business reason.
+- Unit, integration and negative tests exist and were actually run.
+- Cross-platform claims are backed by executed commands.
+- No production private media, credentials or personally identifiable data are committed.
+- Docs, changelog, ADRs and roadmap are accurate.
+
+## Future build commands
+
+Once implemented, this section will name precise commands for:
+- Environment setup and dependency restore.
+- Build and clean rebuild.
+- Formatting and lint.
+- Unit/integration/e2e test suites.
+- Database init and migration.
+- Start local development service/UI.
+- Package release artifacts.
+- Backup and restore.
+- Dependency/secret/license scans.
+
+**Do not publish speculative commands.** Their exact spellings must be copied from working toolchains with recorded expected results.

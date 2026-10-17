@@ -23,6 +23,7 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 - [Why HARALD?](#why-harald)
 - [Current status](#current-status)
 - [Architecture and design](#architecture-and-design)
+- [Project documentation](#project-documentation)
 - [Goals and design principles](#goals-and-design-principles)
 - [Supported media: target scope](#supported-media-target-scope)
 - [Planned functionality](#planned-functionality)
@@ -82,6 +83,12 @@ HARALD is **not yet a working library application**.
 The proposed modular architecture, extensibility model, security boundaries, domain entities, deployment options, ADR backlog, and acceptance gates are documented in the **[HARALD Architecture Document](docs/architecture/ARCHITECTURE.md)** (German; draft v0.1). It intentionally keeps the implementation language and UI framework open while defining durable contracts for cataloging, inventory, lending, digital assets, and future integrations.
 
 This document describes a **planned architecture**, not features already implemented or released.
+
+## Project documentation
+
+The [documentation index](docs/README.md) links all current documents. For implementation planning, start with the [detailed roadmap](ROADMAP.md), [agent/developer instructions](AGENTS.md), [requirements and original Pflichtenheft](docs/requirements/README.md), [24-program research baseline](docs/research/README.md), and [architecture decision register](docs/architecture/adr/README.md). Additional guidance: [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [test strategy](docs/testing/TEST_STRATEGY.md), and [operations design](docs/operations/OPERATIONS.md).
+
+The planning documents have different authority: historical requirements and research are preserved for traceability; ADRs explicitly identify decisions as **Proposed** or **Accepted**. No technology stack or stable API has yet been approved.
 
 ## Goals and design principles
 
@@ -451,7 +458,7 @@ The initial goal is a documented catalog exchange format that preserves work/edi
 
 ## Roadmap
 
-This is a **planning roadmap**. It indicates intended sequencing, not delivery dates.
+This is a **planning roadmap**. It indicates intended sequencing, not delivery dates. For detailed milestones, dependencies, acceptance checks, and honest progress, see **[ROADMAP.md](ROADMAP.md)**.
 
 | Stage | Objective | Main deliverables |
 | --- | --- | --- |
@@ -500,7 +507,7 @@ A production-ready R1 should not be declared complete until:
 
 **There is currently no installation command, development server, binary release, or package to run.**
 
-The repository contains a license and this planning-oriented README. Once the technology stack is selected and source code is introduced, this section will be updated with **tested**, version-specific steps for:
+The repository contains planning and reference documentation, the MIT license, and a conceptual UI image, **but no runnable software**. Once the technology stack is selected and source code is introduced, this section will be updated with **tested**, version-specific steps for:
 
 1. Supported operating systems and prerequisites.
 2. Obtaining or cloning the source.
@@ -522,44 +529,35 @@ Cloning the repository **does not install a usable HARALD application** at this 
 
 ## Planned repository structure
 
-The following tree is a **proposal**, not a claim that these directories already exist:
+The following is a **high-level view of current documentation**, with the application code and build infrastructure still to be designed. For every document see [docs/README.md](docs/README.md).
 
 ~~~text
 SASD-Harald/
 ├── README.md
+├── AGENTS.md
+├── ROADMAP.md
+├── CONTRIBUTING.md
+├── SECURITY.md
+├── CHANGELOG.md
 ├── LICENSE
-├── CHANGELOG.md                 # planned
-├── CONTRIBUTING.md              # planned
-├── SECURITY.md                  # planned
-├── docs/                        # planned
-│   ├── requirements/
-│   ├── architecture/
-│   │   └── adr/
-│   ├── api/
-│   ├── user-guide/
-│   ├── admin-guide/
-│   ├── migration/
-│   └── testing/
-├── src/                         # planned
-│   ├── domain/
-│   ├── application/
-│   ├── infrastructure/
-│   ├── api/
-│   ├── ui/
-│   └── adapters/
-├── tests/                       # planned
-│   ├── unit/
-│   ├── integration/
-│   ├── contracts/
-│   ├── end-to-end/
-│   ├── security/
-│   └── performance/
-├── tools/                       # planned
-└── .github/
-    └── workflows/               # planned
+└── docs/
+    ├── README.md
+    ├── architecture/
+    │   ├── ARCHITECTURE.md
+    │   └── adr/
+    ├── requirements/
+    ├── research/
+    ├── testing/
+    ├── operations/
+    ├── development/
+    ├── migration/
+    ├── api/
+    ├── user-guide/
+    ├── admin-guide/
+    └── images/
 ~~~
 
-The actual naming and folder layout may change once implementation language and packaging are agreed.
+**Future implementation (not yet present):** source modules, tests, tool scripts, build tooling, optional package definitions, and CI workflows. Their final locations and language/framework conventions depend on accepted ADRs; see [ADR-0001](docs/architecture/adr/0001-technology-stack-and-platforms.md).
 
 ## Quality and testing
 
@@ -592,7 +590,7 @@ A practical way to get involved now is to:
 
 Please avoid adding unrelated frameworks or creating dependencies on proprietary hosted services without prior discussion. Prefer portable interfaces, explicit business rules, small diffs, readable code, and comments that explain non-obvious decisions.
 
-Formal contribution and security-reporting guides are planned. Until a private vulnerability-reporting channel is established, **do not publish exploit details or private data in a public issue**; use an available private contact or disclosure mechanism if one is provided on the repository profile.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution expectations and [SECURITY.md](SECURITY.md) for responsible, private vulnerability reporting. **Do not publish exploit details or personal data in public issues.**
 
 ### Reporting useful issues
 

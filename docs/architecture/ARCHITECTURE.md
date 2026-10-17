@@ -1280,8 +1280,8 @@ Wie können wir die Entscheidung später ändern?
 ## 32.2 Projektgrundlagen
 
 - HARALD Repository und README: <https://github.com/Robin-Goerlach/SASD-Harald>
-- Bisheriges Pflichtenheft: `Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md` (OMB-PFH-001; noch nicht im Repository abgelegt).
-- Vorangegangener Funktionskatalog: `Open_Source_Bibliotheksverwaltung_Vollstaendiger_Funktionskatalog_2026.md` (24 Programme; noch nicht im Repository abgelegt).
+- Bisheriges Pflichtenheft: [Originalentwurf OMB-PFH-001](../requirements/Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md) (unveränderte historische Vorlage; Projektname HARALD und bestehende MIT-Lizenz gelten).
+- Vorangegangener Funktionskatalog: [Originalrecherche mit 24 Programmen](../research/Open_Source_Bibliotheksverwaltung_Vollstaendiger_Funktionskatalog_2026.md) (Stand Oktober 2026).
 - MIT-Lizenz: [`LICENSE`](../../LICENSE).
 - Bestehender Entwurfsscreenshot: [`docs/images/harald-ui-concept.webp`](../images/harald-ui-concept.webp).
 
