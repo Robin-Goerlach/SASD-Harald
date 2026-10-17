@@ -193,10 +193,26 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Audio CDs and multi-disc audiobook sets with narrators and components.
 - [ ] Configurable yet validated media descriptors; typed core fields remain authoritative.
 - [ ] Locations, copy conditions, availability, ownership, acquisitions.
+- [ ] Design for **classification notation / call number independently of physical location**; support user-entered DDC-like numbers and custom sorting once scoped (see ACQ/SHELF addendum).
 - [ ] Explicit copy-level barcodes and identification.
 - [ ] Multi-part set completeness checks.
 
 **Gate:** A DVD, Blu-ray, printed book, music CD, and six-disc audiobook all coexist in the same catalog; item and edition metadata do not leak into each other.
+
+### Candidate addition — Book acquisition requests (scope/release to approve)
+
+**Status: explicitly requested, but release priority not yet approved.** See [ACQUISITIONS_AND_SHELVING.md](docs/requirements/ACQUISITIONS_AND_SHELVING.md) for ACQ-001–ACQ-012 and SHELF-001–SHELF-010.
+
+- [ ] Capture future purchases **without creating a Physical Item** before receipt.
+- [ ] Track wanted/researched/ordered/partly received/received/cancelled status as appropriate to the agreed minimal scope.
+- [ ] Link requests to an existing Work/Edition or a provisional bibliographic description; detect but do not silently merge duplicates.
+- [ ] On actual receipt, create individually identified items and link them back to the request.
+- [ ] Keep requests, receipts, private cost details, rights and updates included in controlled export/backup.
+- [ ] Decide whether simple requests enter **R1**, with advanced purchase orders/budgets remaining **R3**.
+- [ ] Decide default shelving scheme and release for manual classification versus later automatic DDC lookup.
+- [ ] Preserve the user's **other future functionality as unspecified** pending discussion.
+
+**Completion check (not yet a release blocker):** ACQ-AT and SHELF-AT cases from the addendum are reviewed, assigned to specific milestones, and executable tests are written when implemented. The original R1 requirements are not silently rewritten.
 
 ### M6 — Accounts, roles, and authorization (P05)
 
@@ -462,6 +478,7 @@ Do not freeze all these decisions simultaneously. Resolve the ones blocking **M1
 - [Language implementation tracks](implementations/README.md)
 - [Shared contract/test planning](shared/README.md)
 - [Requirements baseline (German originals)](docs/requirements/README.md)
+- [New requirement addendum — acquisitions and Finch-style book classification](docs/requirements/ACQUISITIONS_AND_SHELVING.md)
 - [Research and reference program inventory](docs/research/README.md)
 - [ADR register](docs/architecture/adr/README.md)
 - [Agent/developer instructions](AGENTS.md)

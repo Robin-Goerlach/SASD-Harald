@@ -17,6 +17,7 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | Shared cross-language material | [shared](../shared/README.md) | Future contracts, fixture samples and conformance checks |
 | Decisions | [ADR index](architecture/adr/README.md) | Proposed/accepted decisions and decision template |
 | Requirements | [Requirements index](requirements/README.md) | Status notes and full 2026 German Pflichtenheft |
+| New requirements | [Book acquisition and systematic shelving addendum](requirements/ACQUISITIONS_AND_SHELVING.md) | Future purchases, DDC-style shelfmarks, physical locations, test scenarios |
 | Research | [Research index](research/README.md) | Full 24-program feature catalog and F001–F110 |
 | Testing | [TEST_STRATEGY.md](testing/TEST_STRATEGY.md) | Golden fixtures, invariant tests, concurrency, security and acceptance evidence |
 | Operating HARALD | [OPERATIONS.md](operations/OPERATIONS.md) | Proposed backup/restore, upgrade, deployment and incident model |

@@ -12,6 +12,14 @@ This is the **complete original requirements draft** (document ID OMB-PFH-001) p
 
 The feature research underpinning it is archived at [docs/research](../research/README.md). The current project design is in [ARCHITECTURE.md](../architecture/ARCHITECTURE.md), and the delivery order is in [ROADMAP.md](../../ROADMAP.md).
 
+## New requirements addendum (2026-10-17)
+
+[HARALD-REQ-ADD-001 — Planned book acquisitions and systematic shelving](ACQUISITIONS_AND_SHELVING.md) records the newly requested procurement/reading-list workflow (ACQ-001–ACQ-012), optional Dewey-style classification and physical shelf-location separation (SHELF-001–SHELF-010), and proposed acceptance cases.
+
+**Status:** proposed details, not an accepted release commitment and not implemented. In the user's request a further second feature was explicitly postponed; the addendum does **not** guess what it is.
+
+The original Pflichtenheft below remains unchanged to preserve provenance. The additions require prioritization and integration into a future reviewed revision.
+
 ## What changed after the original draft?
 
 | Original draft wording | Current HARALD interpretation |
@@ -58,6 +66,7 @@ A future approved revision should be versioned (for example, HARALD-REQ-001), re
 ## Documents
 
 - [Original full Pflichtenheft](Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md)
+- [New acquisition and classification addendum](ACQUISITIONS_AND_SHELVING.md)
 - [Research baseline — 24 programs](../research/README.md)
 - [Architecture](../architecture/ARCHITECTURE.md)
 - [Roadmap](../../ROADMAP.md)

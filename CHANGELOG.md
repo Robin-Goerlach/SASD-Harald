@@ -9,6 +9,7 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 ## [Unreleased]
 
 ### Documentation
+- Added draft requirements for tracking books intended for purchase and separate Dewey-compatible classification/shelfmark information, with acceptance cases and licensing notes. No runtime functionality has been added.
 - Prepared independent C#, C++, and Java directory tracks with documented empty source/test/example areas; added shared contract/fixture/conformance folders and a multilingual architecture note. **No executable implementations were introduced.**
 - Created an English introductory README describing the proposed catalog and multimedia-management platform.
 - Added a conceptual user-interface image to the repository and README, explicitly labeled a design mockup.

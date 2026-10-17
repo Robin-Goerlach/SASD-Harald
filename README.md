@@ -25,6 +25,7 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 - [Architecture and design](#architecture-and-design)
 - [Multiple implementation languages](#multiple-implementation-languages)
 - [Project documentation](#project-documentation)
+- [Planned acquisitions and shelf classification](#planned-acquisitions-and-shelf-classification)
 - [Goals and design principles](#goals-and-design-principles)
 - [Supported media: target scope](#supported-media-target-scope)
 - [Planned functionality](#planned-functionality)
@@ -91,6 +92,15 @@ This document describes a **planned architecture**, not features already impleme
 The [documentation index](docs/README.md) links all current documents. For implementation planning, start with the [detailed roadmap](ROADMAP.md), [agent/developer instructions](AGENTS.md), [requirements and original Pflichtenheft](docs/requirements/README.md), [24-program research baseline](docs/research/README.md), and [architecture decision register](docs/architecture/adr/README.md). Additional guidance: [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [test strategy](docs/testing/TEST_STRATEGY.md), and [operations design](docs/operations/OPERATIONS.md).
 
 The planning documents have different authority: historical requirements and research are preserved for traceability; ADRs explicitly identify decisions as **Proposed** or **Accepted**. No technology stack or stable API has yet been approved.
+
+## Planned acquisitions and shelf classification
+
+Two additional design areas are now recorded in a [German requirements addendum](docs/requirements/ACQUISITIONS_AND_SHELVING.md):
+
+- **Books to acquire:** a separate planned-items and procurement workflow for wanted, researched, ordered, partly received and received books; a request never falsely increases physical inventory.
+- **Systematic shelving:** optional classification notations and call numbers (including manually recorded **Dewey Decimal Classification** numbers as used in *Person of Interest*) remain separate from a copy's actual building/room/shelf location. Custom and alphabetical shelving must remain possible.
+
+These are **proposals pending scope and release-priority review**, not implemented functions. Any second additional feature that has not yet been described is **intentionally unspecified**. Complete licensed classification datasets will not be redistributed without permission.
 
 ## Multiple implementation languages
 

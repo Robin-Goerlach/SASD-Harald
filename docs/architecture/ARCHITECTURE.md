@@ -990,6 +990,16 @@ Eine Implementierungssprache wäre jetzt eine **zu frühe Bindung**, solange Erw
 - Plugin-Protokoll und Prozessisolierung.
 - Daten-/Asset-Backupimplementation und Indextechnik.
 
+## 23.4 Erweiterung: Beschaffung und Klassifikationssignaturen (Entwurf)
+
+Der neue [Anforderungsnachtrag HARALD-REQ-ADD-001](../requirements/ACQUISITIONS_AND_SHELVING.md) beschreibt zwei zusätzliche Fachthemen: **zu beschaffende Bücher** und **systematische Aufstellung (optional DDC wie in *Person of Interest*)**.
+
+- Beschaffungswünsche/Bestellungen gehören nicht zum vorhandenen physischen Bestand. Ein `PhysicalItem` wird **erst bei tatsächlichem, akzeptiertem Wareneingang** erzeugt. Vorgeschlagene Modulverantwortung: separates `Acquisitions`-/`PlannedCollection`-Anwendungsmodul mit Referenzen auf vorhandene `Work`-/`Edition`-Objekte oder vorläufige bibliografische Daten. Professionelle Erwerbung bleibt später optional.
+- Fachliche **Klassifikationsnotation** (z. B. benutzereingegebene DDC-Nummer) und **Signatur** sind von der **physischen Standort-Hierarchie** zu trennen. Ein Exemplar kann umziehen, ohne dass seine Sachklassifikation wechselt; mehrere Exemplare können dieselbe Signatur haben, aber benötigen eigene Inventar-IDs.
+- Kommerzielle Klassifikationstabellen werden nicht ohne verifizierte Lizenz gebündelt. Benutzerdefinierte Signaturen und alternative Aufstellungssysteme müssen möglich bleiben.
+- Status, Bestell- und Wareneingangsabläufe, Lieferanten-/Preisinformationen und Klassifikationsquellen erfordern Rechteprüfung, verlustarmen Export, Restore und negative Tests.
+- **Verbindlicher Zielrelease, Felder, UI, automatische DDC-Anbindung und zweite spätere Wunschfunktion bleiben offen.** Es gibt hierzu noch keinen ausführbaren Code.
+
 # 24. Repository-Struktur und mehrere Programmiersprachen
 
 Für die zukünftige Entwicklung wurden tatsächlich **drei Sprachverzeichnisse** sowie eine neutrale Austausch-/Teststruktur angelegt. Diese Verzeichnisse haben noch **keine Implementierung**, keinen festgelegten Buildprozess und keine getestete Laufzeit. Sie bedeuten **nicht**, dass alle drei Sprachen parallel produktiv umgesetzt werden müssen.
