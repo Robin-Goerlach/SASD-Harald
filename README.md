@@ -2,7 +2,7 @@
 
 **Open-source library and multimedia collection management**
 
-> **Project status: Planning / pre-alpha.** HARALD is a new project. The features described below are a **product vision and development plan**, not functionality already available in a released application. As of October 2026, this repository contains the project introduction and its MIT license; there is no downloadable application, installer, or supported build procedure yet.
+> **Project status: Planning / pre-alpha.** HARALD is a new project. The features described below are a **product vision and development plan**, not functionality already available in a released application. As of October 2026, this repository contains planning documentation, a concept screenshot, and the MIT license; there is no downloadable application, installer, or supported build procedure yet.
 
 HARALD aims to provide a **free, self-hostable, offline-capable, and extensible system** for cataloging, organizing, finding, inventorying, and lending physical and digital media. Rather than requiring separate applications for books, film collections, audio recordings, and e-books, HARALD is designed around a consistent model that can describe all of them without losing their differences.
 
@@ -11,8 +11,15 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 **Current stage:** Requirements and architecture planning  
 **Primary audience:** Private collectors, households, clubs, small libraries, school libraries, and self-hosting enthusiasts
 
+## Interface preview
+
+![HARALD library and media catalog — UI concept screenshot](docs/images/harald-ui-concept.webp)
+
+*Concept screenshot (AI-generated design mockup). This is not a screenshot of a working release. The final interface and example catalog data may differ.*
+
 ## Contents
 
+- [Interface preview](#interface-preview)
 - [Why HARALD?](#why-harald)
 - [Current status](#current-status)
 - [Goals and design principles](#goals-and-design-principles)
