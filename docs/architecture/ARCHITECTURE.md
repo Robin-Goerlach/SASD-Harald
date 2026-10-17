@@ -348,6 +348,7 @@ Titel, Titelvarianten, Beschreibung, Genre, Sprache, Veröffentlichungsjahr, Bet
 | `other` | Minimales typisiertes Kernschema plus definierte benutzerdefinierte Felder |
 
 Ein **neuer Medientyp** erhält einen registrierten `media_kind`-Schlüssel, eine deklarierte Schema-Version, Validatoren, Indexprojektionen, Detaildarstellung und Importmapping. Unbekannte Profile müssen **erhaltend** exportierbar und speicherbar sein; ein alter Client darf unbekannte Daten nicht beim Speichern löschen. In R1 bleiben Basisprofile **integriert und getestet**. Beliebige ausführbare Profil-Plugins sind kein R1-Versprechen.
+
 ## 7.5 Erweiterungsfelder ohne Datenmüll
 
 Vorgeschlagener Feldvertrag:
@@ -697,6 +698,7 @@ Die Berechtigung ergibt sich aus **Aktion × Ressource × Scope × Besitzerbezie
 4. Kein Einbinden von Kern-Assemblies, DLLs oder ORM-Modellen nötig.
 
 ### Späterer PostgreSQL-Betrieb
+
 1. `PersistencePort`-Adapter implementieren.
 2. Migrations- und Indexstrategie dokumentieren.
 3. Dieselben Fach- und Concurrency-Contract-Tests ausführen.
@@ -1045,6 +1047,7 @@ SASD-Harald/
 8. **Performance/Fault Injection:** konkurrierende Checkout-Clients, abgebrochener Upload, volles Dateisystem, Indexwiederaufbau.
 
 ## 25.2 Verbindliche Beispieltests
+
 | Fall | Was beweist er? | Pflichtenheft-Bezug |
 |---|---|---|
 | Buch mit zwei Inventarexemplaren | Werk/Ausgabe/Kopie sauber getrennt | AT-002 |
