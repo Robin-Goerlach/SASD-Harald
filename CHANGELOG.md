@@ -19,6 +19,7 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 - Imported the prior German functional specification and 24-program research catalog as historical **draft planning references**, accompanied by status and naming notes.
 
 ### Planning
+- Clarified initial storage rollout: local JSON and SQLite first; MySQL/MariaDB, PostgreSQL, Oracle and remote REST are architectural targets rather than V1 release obligations. No provider has been implemented.
 - Established HARALD as the project name.
 - Confirmed the repository already uses the MIT license.
 - Identified stack/platform selection, accepted ADRs, source implementation, test automation and runnable installation as **future tasks**.

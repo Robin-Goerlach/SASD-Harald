@@ -1,6 +1,6 @@
 # ADR-0004 — Configurable Persistence Profiles and Remote Application API
 
-- **Status:** Proposed — architecture requirement recorded, details/phase still OPEN
+- **Status:** Proposed — V1 scope preference clarified; implementation details/acceptance still OPEN
 - **Date:** 2026-10-17
 - **Owner/approver:** Repository maintainer
 - **Requirements:** User-requested selectable local JSON/SQLite, remote MySQL/PostgreSQL/Oracle, and remote REST data access with UI/file configuration
@@ -55,7 +55,16 @@ The existing architecture already favors Ports & Adapters and domain isolation, 
 | Always use a single HARALD server | Uniform safety and simple clients | Adds mandatory service even for a personal local/offline library; deferred |
 | JSON only as import/export | Least production-storage work | Would not meet user's local JSON backend option; can remain fallback if provider complexity proves excessive |
 
-## Suggested release approach (not decided)
+## User-confirmed release-scope clarification (2026-10-17)
+
+The maintainer clarified that **full implementation of all listed database and REST backends is NOT required in HARALD V1.0**. Having them **architecturally provided for through exchangeable adapters and an application facade is sufficient**.
+
+- **Initial implementation focus:** local SQLite and local JSON, with configuration via UI and/or file as the intended V1 scope; JSON still needs a validated crash-safe design.
+- **Architectural extension targets, not V1 obligations:** remote MySQL/MariaDB, PostgreSQL, Oracle and REST application-server access.
+- Additional backends will be implemented incrementally according to actual demand and a later milestone decision.
+- This clarification **does not** select the implementation language, approve a final driver/API design, claim any backend works, or mark ADR-0004 Accepted.
+
+## Suggested implementation sequence (V1 scope clarified)
 
 - **R0:** Interface design, configuration contract, resolver, at least one verified local adapter (SQLite candidate).
 - **R1:** UI/file profile editing and safe storage choice; local JSON adapter if tested and product priority confirmed.
@@ -63,7 +72,7 @@ The existing architecture already favors Ports & Adapters and domain isolation, 
 - **R2/R3:** SQL server adapter expansion (PostgreSQL/MySQL/MariaDB), each tested on real servers.
 - **R3/optional:** Oracle adapter after demand, dependency/license and CI environment review.
 
-**Owner decision required:** Which of these options must work in V1 rather than remaining architecturally prepared?
+**Scope clarification received:** V1 does not need the remote backends; they remain architectural extension points. Remaining decisions concern actual technology, local JSON/SQLite design and validation, configuration semantics, and when to implement individual remote adapters.
 
 ## Consequences
 
@@ -77,7 +86,7 @@ The existing architecture already favors Ports & Adapters and domain isolation, 
 
 ## Acceptance before marking Accepted
 
-- [ ] Explicit V1 provider scope selected.
+- [x] V1 scope direction clarified: prioritize **local JSON and SQLite**; remote SQL/REST are **architectural targets only**, not V1 obligations. Exact technical release gates remain to be accepted.
 - [ ] Reference backend and operating profile selected.
 - [ ] Capability contract and stable application facade reviewed.
 - [ ] Single-writer/transactional guarantees documented per provider.
@@ -91,4 +100,5 @@ The existing architecture already favors Ports & Adapters and domain isolation, 
 
 ## Decision log
 
-- **2026-10-17:** Proposed in response to explicit user request. Support goals documented; exact sequencing and technical choices await review.
+- **2026-10-17:** Proposed in response to explicit user request. Support goals documented.
+- **2026-10-17:** Maintainer clarified that **architectural provision for remote backends is sufficient**; no requirement to implement all of them in V1. Local JSON/SQLite remain the initial implementation focus. Technical details are still proposed.

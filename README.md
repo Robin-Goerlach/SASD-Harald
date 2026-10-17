@@ -96,7 +96,7 @@ Candidate backends include **local JSON**, **local SQLite**, **remote MySQL/Mari
 
 The UI would use one application facade; the mediation layer would select either local/server-side business use cases with storage adapters or a remote HARALD application client. The remote REST server must enforce its own domain transactions and authorization; database passwords must not be sent to browsers. Selecting a different storage profile would **not** silently migrate data.
 
-See the detailed [German storage-provider design](docs/architecture/STORAGE_PROVIDERS.md) and [ADR-0004 (Proposed)](docs/architecture/adr/0004-configurable-persistence-and-remote-api.md). **Exactly which backends ship in V1 remains open.**
+See the detailed [German storage-provider design](docs/architecture/STORAGE_PROVIDERS.md) and [ADR-0004 (Proposed)](docs/architecture/adr/0004-configurable-persistence-and-remote-api.md). **Release scope clarified:** Remote SQL and REST backends need only be architecturally accommodated in V1, **not implemented**. Local **JSON and SQLite are the initial implementation priorities**, subject to genuine crash-consistency, security and restore tests.
 
 ## Project documentation
 

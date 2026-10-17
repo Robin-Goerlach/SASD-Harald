@@ -23,6 +23,8 @@ Die gewünschte Auswahl umfasst:
 6. **Entfernter REST-Dienst** — idealerweise ein HARALD-kompatibler Server mit versionierter Anwendungsschnittstelle, Authentifizierung und zentral durchgesetzter Fachlogik.
 7. **Später erweiterbare Provider**, z. B. weitere SQL-Engines oder verteilte Speicher-Services, sobald Bedarf, Treiber und Tests vorhanden sind.
 
+**Freigabe des groben Releaseumfangs (17.10.2026):** Der Nutzer verlangt **nicht**, dass bereits HARALD V1.0 sämtliche Datenbanken und REST anbietet. Für MySQL/MariaDB, PostgreSQL, Oracle und REST genügt zunächst die **architektonische Vorbereitung** mit klaren Schnittstellen. **Lokales JSON und SQLite werden für die erste Implementierung priorisiert**; genaue technische Freigabekriterien, insbesondere JSON-Schreibkonsistenz, müssen wir noch prüfen.
+
 **Wichtig:** Diese Liste ist ein gewünschtes Architekturziel, **keine Behauptung bereits implementierter Unterstützung**. Jede technische Variante erhält erst dann den Status „supported“, wenn es einen realen Adapter, echte Integrations- und Sicherheitstests, Backup-/Restoreverfahren und dokumentierte Einschränkungen gibt.
 
 ## 2. Grundregel: nicht nur UI und Datenbank
@@ -189,7 +191,7 @@ Capabilities werden **tatsächlich geprüft**, nicht ausschließlich aus einer s
 | **Oracle remote** | Institutionelle Umgebung | Proprietärer Server, Treiber-/Redistributions-/Lizenzprüfung, Datentypen, Sequenzen, Schema/DDL und Locking | Gesondertes späteres Profil |
 | **HARALD REST remote** | Zentrale Bibliothek mit Desktop-/Web-/CLI-Clients | API-Version, AuthZ, HTTPS, Retry, Offline-Verhalten, Konflikte, Asset-Streaming | Architektur von Beginn an, Implementierung releaseabhängig |
 
-Reihenfolge ist **nicht verbindlich**. Sollte der Nutzer Remote-Datenbanken oder REST zwingend für HARALD V1.0 verlangen, müssen Roadmap und Testumfang entsprechend angepasst werden. Das ist eine explizite Produktpriorisierung, keine technische Nebenbemerkung.
+**Vom Nutzer geklärter Releaseumfang:** Remote-DBs und REST sind **keine V1-Muss-Funktionen**. Ihre Port-/Adapterarchitektur muss allerdings die spätere Implementierung ohne Umbau der Oberfläche oder fachlichen Kernlogik ermöglichen. Für V1 wird zunächst lokale JSON-/SQLite-Datenhaltung angestrebt; Sicherheits-, Transaktions- und Restore-Gates bleiben zwingend.
 
 ## 6. JSON als lokale Datenhaltung — besondere Regeln
 
@@ -492,12 +494,12 @@ Diese Reihenfolge hält die erste Version nutzbar, ohne Remote-Backends aus der 
 | **R2/R3 (Priorisierung offen)** | PostgreSQL, MySQL/MariaDB als alternative Serveradapter | Echte DB-Integrationstests, Migrationen |
 | **R3/optional** | Oracle und weitere spezialisierte DBs | Treiber-/Lizenzprüfung, QA-Matrix, Betreiberbedarf |
 
-**Keine dieser Zeilen ist bereits erledigt.** Wenn alle Varianten für V1 nötig sind, muss der Aufwand und Release-Schnitt explizit angepasst werden.
+**Keine dieser Zeilen ist bereits erledigt.** Der Nutzer hat bestätigt: **Nicht alle Backendvarianten müssen in V1 funktionieren**. Die zusätzlichen Remoteadapter werden später bedarfsabhängig implementiert.
 
 ## 14. Architekturentscheidungen, die wir noch treffen müssen
 
-1. **V1-Umfang:** Lokales JSON und SQLite beide verpflichtend? Remote HARALD-REST bereits in V1?
-2. **SQL-Provider:** PostgreSQL/MySQL/Oracle in V1 oder nachgelagert?
+1. **V1-Richtung festgelegt:** Lokales JSON und SQLite zuerst; konkrete Umsetzung/Tests sind noch zu planen. **Remote SQL und REST bleiben V1-unverpflichtende Erweiterungspunkte.**
+2. **Spätere SQL-Provider:** In welcher Reihenfolge sollen PostgreSQL, MySQL/MariaDB und Oracle nach V1 entstehen?
 3. **Betriebsform:** Desktop mit eingebettetem Anwendungsdienst, Webserver oder kombinierbarer Client/Server-Modus?
 4. **Einzelner Bestand oder mehrere parallel geöffnete Bibliotheken?** Profile sind hierfür nicht automatisch Multitenancy.
 5. **Lokaler JSON-Speicher:** Ein Snapshot oder Journal? Größen-/Leistungsgrenzen? Multischreiber ausdrücklich ausgeschlossen?
@@ -513,7 +515,7 @@ Bis zur Freigabe gelten `SQLite`, `JSON`, `PostgreSQL`, `MySQL/MariaDB`, `Oracle
 
 ### Architekturgate
 
-- [ ] Nutzer bestätigt das gewünschte Minimalziel (welche Provider müssen bereits V1 funktionieren?).
+- [x] Nutzer hat den groben Umfang bestätigt: **keine Pflicht zur Implementierung aller Backendtypen in V1; Remoteprovider zunächst nur architektonisch vorsehen**.
 - [ ] ADR-0004 wurde nach Review **Accepted**.
 - [ ] Backendprofil-Konfiguration, UI-Rechte und Secretspeicher sind festgelegt.
 - [ ] Ein JSON-/SQL-/REST-Kontrakt ist ausreichend spezifiziert, ohne interne DB-Schemata öffentlich zu machen.

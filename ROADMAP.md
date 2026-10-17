@@ -144,7 +144,7 @@ This is a **dependency illustration**. Parallel development is possible where in
 - [ ] Compile a minimal domain module with **no** ORM/UI/network imports.
 - [ ] Define application-use-case interfaces and persistence/storage ports.
 - [ ] Design a **configurable backend mediation layer** with a UI-facing application facade, storage profiles, capability handshake, profile validation and adapter contracts for JSON/SQLite/remote SQL/remote HARALD REST (see [storage architecture](docs/architecture/STORAGE_PROVIDERS.md)).
-- [ ] Decide **ADR-0004** and which providers are required by R1; preparing an adapter interface is not equivalent to shipping all drivers.
+- [ ] Finalize **ADR-0004** implementation details; the maintainer has clarified **V1 need not implement all backends**. Focus first on local JSON/SQLite, keep remote SQL/REST as planned adapters. Preparing an interface is not equivalent to shipping a driver.
 - [ ] Establish deterministic formatting, lint/static analysis, and test commands.
 - [ ] Create automated CI jobs for the actually supported stack.
 - [ ] Set up project configuration with secret handling and safe defaults.
@@ -175,6 +175,8 @@ This is a **dependency illustration**. Parallel development is possible where in
 ## 6. R1 — A usable multimedia library
 
 R1 must stand alone as a useful small-library product; all R1 MUST requirements from the specification are release blockers unless explicitly changed.
+
+**Backend scope clarified:** V1 targets a local, configurable **SQLite/JSON** storage implementation first, with appropriate concurrency/restore tests. Remote **MySQL/MariaDB, PostgreSQL, Oracle and HARALD REST are architectural extension points**, not V1 release requirements. No adapter is implemented yet.
 
 ### M4 — Complete catalog, identities, and relationships (P01)
 
