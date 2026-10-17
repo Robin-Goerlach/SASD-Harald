@@ -1,0 +1,51 @@
+# HARALD — development artifact exclusions (language-neutral repository scaffold)
+# These patterns reserve space for future C#, C++ and Java development.
+# No build system or production implementation is selected yet.
+
+# Operating system / editor caches
+.DS_Store
+Thumbs.db
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET / C# build outputs
+**/bin/
+**/obj/
+**/TestResults/
+*.nupkg
+
+# C++ / CMake build artifacts
+**/build/
+**/cmake-build-*/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/compile_commands.json
+
+# Java / JVM artifacts
+**/target/
+**/.gradle/
+**/out/
+*.class
+
+# Logs, temporary files and local runtime data
+*.log
+*.tmp
+*.swp
+*.bak
+*.orig
+**/.cache/
+**/coverage/
+
+# Local secrets and configuration overrides (never commit real credentials)
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+
+# Keep intentionally empty tracked source/test folders with .gitkeep files.

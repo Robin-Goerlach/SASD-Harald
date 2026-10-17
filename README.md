@@ -23,6 +23,7 @@ HARALD aims to provide a **free, self-hostable, offline-capable, and extensible 
 - [Why HARALD?](#why-harald)
 - [Current status](#current-status)
 - [Architecture and design](#architecture-and-design)
+- [Multiple implementation languages](#multiple-implementation-languages)
 - [Project documentation](#project-documentation)
 - [Goals and design principles](#goals-and-design-principles)
 - [Supported media: target scope](#supported-media-target-scope)
@@ -67,6 +68,7 @@ HARALD is **not yet a working library application**.
 | Project name and public repository | Established |
 | Open-source license | MIT license present |
 | Product scope and feature planning | Drafted; subject to refinement |
+| C#, C++, and Java directories | Prepared as documentation-only placeholders; **no implementations yet** |
 | Implementation language and UI framework | Not selected |
 | Database implementation and schema migrations | Not implemented |
 | Catalog, inventory, lending, and search | Planned |
@@ -89,6 +91,14 @@ This document describes a **planned architecture**, not features already impleme
 The [documentation index](docs/README.md) links all current documents. For implementation planning, start with the [detailed roadmap](ROADMAP.md), [agent/developer instructions](AGENTS.md), [requirements and original Pflichtenheft](docs/requirements/README.md), [24-program research baseline](docs/research/README.md), and [architecture decision register](docs/architecture/adr/README.md). Additional guidance: [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [test strategy](docs/testing/TEST_STRATEGY.md), and [operations design](docs/operations/OPERATIONS.md).
 
 The planning documents have different authority: historical requirements and research are preserved for traceability; ADRs explicitly identify decisions as **Proposed** or **Accepted**. No technology stack or stable API has yet been approved.
+
+## Multiple implementation languages
+
+HARALD's repository has prepared, **empty implementation tracks** for **[C#](implementations/csharp/README.md)**, **[C++](implementations/cpp/README.md)** and **[Java](implementations/java/README.md)**. They are **not** working applications or commitments to maintain three backends.
+
+[implementations/README.md](implementations/README.md) explains the language folders; [shared/](shared/README.md) reserves space for future language-independent contracts, fixtures, and conformance tests. The [multilanguage architecture proposal](docs/architecture/MULTI_LANGUAGE.md) discusses **one backend plus clients** versus **independent implementations**.
+
+**ADR-0001 remains open.** Language folders do not determine the implementation stack, runtime dependencies, supported operating systems, API, or release order.
 
 ## Goals and design principles
 
@@ -527,11 +537,11 @@ cd SASD-Harald
 
 Cloning the repository **does not install a usable HARALD application** at this stage.
 
-## Planned repository structure
+## Repository structure
 
-The following is a **high-level view of current documentation**, with the application code and build infrastructure still to be designed. For every document see [docs/README.md](docs/README.md).
+The paths below are tracked in Git today. **Implementation folders contain only placeholder files and guidance**, not compiled code or a functioning application. The exact internal layout and build tooling will be chosen after [ADR-0001](docs/architecture/adr/0001-technology-stack-and-platforms.md).
 
-~~~text
+```text
 SASD-Harald/
 ├── README.md
 ├── AGENTS.md
@@ -540,10 +550,22 @@ SASD-Harald/
 ├── SECURITY.md
 ├── CHANGELOG.md
 ├── LICENSE
+├── .gitignore
+├── implementations/
+│   ├── README.md
+│   ├── csharp/                # README + empty src/tests/examples
+│   ├── cpp/                   # README + empty include/src/tests/examples
+│   └── java/                  # README + empty src/tests/examples
+├── shared/
+│   ├── README.md
+│   ├── contracts/             # guidance; no public contract yet
+│   ├── fixtures/              # guidance; no test data yet
+│   └── conformance/           # guidance; no executable tests yet
 └── docs/
     ├── README.md
     ├── architecture/
     │   ├── ARCHITECTURE.md
+    │   ├── MULTI_LANGUAGE.md
     │   └── adr/
     ├── requirements/
     ├── research/
@@ -555,9 +577,9 @@ SASD-Harald/
     ├── user-guide/
     ├── admin-guide/
     └── images/
-~~~
+```
 
-**Future implementation (not yet present):** source modules, tests, tool scripts, build tooling, optional package definitions, and CI workflows. Their final locations and language/framework conventions depend on accepted ADRs; see [ADR-0001](docs/architecture/adr/0001-technology-stack-and-platforms.md).
+The directories intentionally do **not** contain guessed SDK versions, fake build scripts or invented green CI results. Real implementations will need appropriate source, module, migration and test structures only after the technology decision.
 
 ## Quality and testing
 

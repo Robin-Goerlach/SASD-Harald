@@ -990,48 +990,48 @@ Eine Implementierungssprache wäre jetzt eine **zu frühe Bindung**, solange Erw
 - Plugin-Protokoll und Prozessisolierung.
 - Daten-/Asset-Backupimplementation und Indextechnik.
 
-# 24. Vorgeschlagene Repository-Struktur
+# 24. Repository-Struktur und mehrere Programmiersprachen
+
+Für die zukünftige Entwicklung wurden tatsächlich **drei Sprachverzeichnisse** sowie eine neutrale Austausch-/Teststruktur angelegt. Diese Verzeichnisse haben noch **keine Implementierung**, keinen festgelegten Buildprozess und keine getestete Laufzeit. Sie bedeuten **nicht**, dass alle drei Sprachen parallel produktiv umgesetzt werden müssen.
+
+Die getrennte Anleitung [MULTI_LANGUAGE.md](MULTI_LANGUAGE.md) erläutert die beiden Alternativen: **ein autoritativer HARALD-Kern mit fremdsprachigen Clients** oder **mehrere vollständige Implementierungen mit gemeinsamen Verträgen und Konformitätstests**. Die endgültige Entscheidung bleibt in [ADR-0001](adr/0001-technology-stack-and-platforms.md) offen.
 
 ```text
 SASD-Harald/
-├── README.md
-├── LICENSE
-├── CHANGELOG.md                         # geplant
-├── CONTRIBUTING.md                      # geplant
-├── SECURITY.md                          # geplant
-├── docs/
-│   ├── images/
-│   │   └── harald-ui-concept.webp       # bereits vorhanden
-│   ├── architecture/
-│   │   ├── ARCHITECTURE.md              # dieses Dokument
-│   │   └── adr/                         # geplant: ADR-0001-*.md ...
-│   ├── requirements/                    # geplant: Pflichtenheft + Traceability
-│   ├── api/                             # geplant: OpenAPI/Schema
-│   ├── formats/                         # geplant: Export-/Plugin-Schemas
-│   ├── user-guide/                      # geplant
-│   └── operations/                      # geplant
-├── src/                                 # geplant; Sprache bestimmt genaue Struktur
-│   ├── domain/
-│   ├── application/
-│   ├── contracts/
-│   ├── modules/
-│   ├── infrastructure/
-│   ├── api/
-│   ├── cli/
-│   └── ui/
-├── tests/                               # geplant
-│   ├── unit/
-│   ├── integration/
-│   ├── architecture/
-│   ├── contract/
-│   ├── security/
-│   ├── e2e/
-│   └── performance/
-├── tools/                               # geplant
-└── .github/workflows/                   # geplant
+├── README.md, ROADMAP.md, AGENTS.md, LICENSE
+├── implementations/
+│   ├── csharp/
+│   │   ├── README.md
+│   │   ├── src/                 # leer; .gitkeep
+│   │   ├── tests/               # leer; .gitkeep
+│   │   └── examples/            # leer; .gitkeep
+│   ├── cpp/
+│   │   ├── README.md
+│   │   ├── include/             # leer; .gitkeep
+│   │   ├── src/                 # leer; .gitkeep
+│   │   ├── tests/               # leer; .gitkeep
+│   │   └── examples/            # leer; .gitkeep
+│   └── java/
+│       ├── README.md
+│       ├── src/                 # leer; .gitkeep
+│       ├── tests/               # leer; .gitkeep
+│       └── examples/            # leer; .gitkeep
+├── shared/
+│   ├── contracts/               # README, noch keine freigegebenen Protokolle
+│   ├── fixtures/                # README, noch keine Testdatensätze
+│   └── conformance/             # README, noch kein ausführbarer Testtreiber
+└── docs/
+    ├── architecture/
+    │   ├── ARCHITECTURE.md
+    │   ├── MULTI_LANGUAGE.md
+    │   └── adr/
+    ├── requirements/, research/, testing/, operations/
+    └── api/, migration/, development/, user-guide/, admin-guide/, images/
 ```
 
-**Strukturhinweis:** Heute vorhandene Dateien sind ausdrücklich markiert; alle anderen Einträge sind **Plan**. Die endgültige Sprach- und Buildorganisation kann die Baumdarstellung verändern, **nicht** jedoch die fachlichen Grenzen.
+Die ursprüngliche sprachneutrale Unterteilung `domain/application/contracts/modules/infrastructure/api/cli/ui` bleibt ein **logisches Schichtenmodell**; sie muss nicht mechanisch in jeder Sprache als identischer Verzeichnisbaum abgebildet werden. Später verwenden wir möglichst idiomatische Projektstrukturen, ohne ihre Architekturgrenzen aufzugeben.
+
+**Integrationsregel:** Keine parallelen, unabhängigen Anwendungsserver dürfen die interne Datenbank eines anderen HARALD-Backends ohne definierte Transaktions-/Synchronisationsarchitektur direkt beschreiben. Sprachübergreifender Zugriff erfolgt über autorisierte, versionierte Anwendungsschnittstellen und geprüfte Austauschformate.
 
 # 25. Qualitätssicherung und Architekturtests
 

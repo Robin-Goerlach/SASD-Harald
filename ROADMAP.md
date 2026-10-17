@@ -110,6 +110,7 @@ This is a **dependency illustration**. Parallel development is possible where in
 **Deliverables**
 - [x] GitHub repository, MIT license, README, and visual concept.
 - [x] Architecture proposal with module boundaries and extension directions.
+- [x] Reserve directories for C#, C++ and Java plus language-neutral shared contract/fixture/conformance areas (documentation-only; no production stack chosen).
 - [ ] Approved functional scope for R1 and named open decisions.
 - [ ] Roadmap, developer/agent instructions, contribution and security policies (documents must be reviewed after creation).
 - [ ] Documented ADR process and initial open stack ADR.
@@ -457,6 +458,9 @@ Do not freeze all these decisions simultaneously. Resolve the ones blocking **M1
 
 - [README — current status and vision](README.md)
 - [Architecture proposal (German)](docs/architecture/ARCHITECTURE.md)
+- [Multi-language architecture and directory structure (German)](docs/architecture/MULTI_LANGUAGE.md)
+- [Language implementation tracks](implementations/README.md)
+- [Shared contract/test planning](shared/README.md)
 - [Requirements baseline (German originals)](docs/requirements/README.md)
 - [Research and reference program inventory](docs/research/README.md)
 - [ADR register](docs/architecture/adr/README.md)

@@ -42,6 +42,12 @@ Technology choices should not be decided through popularity or unsupported claim
 
 Do not treat the examples above as an approved dual implementation or a commitment to maintain C#, C++ and other languages simultaneously.
 
+## Repository directory preparation (non-decision)
+
+The repository now contains **`implementations/csharp/`**, **`implementations/cpp/`**, **`implementations/java/`**, and **`shared/`** as **documentation and empty source/test placeholders**. See [MULTI_LANGUAGE.md](../MULTI_LANGUAGE.md).
+
+This does **not** favor any candidate, ratify this ADR, choose an authoritative backend, require three releases, or prove runtime/OS compatibility. The competing options and evidence requirements below remain open.
+
 ## Proof-of-concept acceptance checklist
 
 - [ ] Build the same small Work → Edition → two Items model in candidate stacks.

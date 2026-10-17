@@ -31,6 +31,8 @@ As of this document, there is **no released application, no build system, no act
 - A prototype must be labeled experimental. Do not permanently constrain architecture by choosing whichever framework happens to be easiest to scaffold.
 - Start with a small, executable work/edition/item vertical slice. Do not start with generic plugin infrastructure, an OPAC or a multimedia streaming engine.
 
+**Repository directories already prepared:** `implementations/csharp/`, `implementations/cpp/`, and `implementations/java/` contain **only planning READMEs and `.gitkeep` placeholders**. `shared/contracts/`, `shared/fixtures/`, and `shared/conformance/` have only guidance, not published protocols or passing tests. Read [MULTI_LANGUAGE.md](docs/architecture/MULTI_LANGUAGE.md) before adding language-specific code. Language folders do **not** approve multiple production backends or shared database writes.
+
 After the stack is accepted, update AGENTS.md with **real commands**, version requirements and source directories.
 
 ## 3. Never confuse catalog identities

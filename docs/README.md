@@ -11,7 +11,10 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | Overview | [README.md](../README.md) | Project vision, scope, current status |
 | Delivery plan | [ROADMAP.md](../ROADMAP.md) | M0–M17+, R0–R3, dependencies and acceptance gates |
 | Automation and engineering | [AGENTS.md](../AGENTS.md) | Invariants, module boundaries, coding and evidence rules |
-| Architecture (German) | [ARCHITECTURE.md](architecture/ARCHITECTURE.md) | 32 chapters on core design, portability, extension model, rights, testing and open decisions |
+| Architecture (German) | [ARCHITECTURE.md](architecture/ARCHITECTURE.md) | Core design, portability, extension model, rights, testing and open decisions |
+| Multi-language architecture (German) | [MULTI_LANGUAGE.md](architecture/MULTI_LANGUAGE.md) | C#, C++, Java layout; one backend vs independent implementations; contract boundaries |
+| Language tracks | [implementations](../implementations/README.md) | Empty source/test directories with local guidance; no language chosen |
+| Shared cross-language material | [shared](../shared/README.md) | Future contracts, fixture samples and conformance checks |
 | Decisions | [ADR index](architecture/adr/README.md) | Proposed/accepted decisions and decision template |
 | Requirements | [Requirements index](requirements/README.md) | Status notes and full 2026 German Pflichtenheft |
 | Research | [Research index](research/README.md) | Full 24-program feature catalog and F001–F110 |
