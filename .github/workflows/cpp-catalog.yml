@@ -1,0 +1,31 @@
+name: HARALD C++ catalog slice
+
+on:
+  push:
+    paths:
+      - 'implementations/cpp/**'
+      - '.github/workflows/cpp-catalog.yml'
+  pull_request:
+    paths:
+      - 'implementations/cpp/**'
+      - '.github/workflows/cpp-catalog.yml'
+
+jobs:
+  linux:
+    name: Linux / ${{ matrix.compiler }} / ${{ matrix.build_type }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [g++, clang++]
+        build_type: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SQLite development headers
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+      - name: Configure
+        run: cmake -S implementations/cpp -B build-harald -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+      - name: Build
+        run: cmake --build build-harald --parallel 2
+      - name: Test
+        run: ctest --test-dir build-harald --output-on-failure
