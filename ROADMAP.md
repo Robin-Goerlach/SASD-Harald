@@ -2,7 +2,7 @@
 
 > **Document:** HARALD-ROADMAP-001  
 > **Version:** 1.0 — planning baseline  
-> **Last reviewed:** 2026-10-17  
+> **Last reviewed:** 2026-10-26  
 > **Status:** Proposed; not a promise of release dates or completed functionality  
 > **Repository:** [Robin-Goerlach/SASD-Harald](https://github.com/Robin-Goerlach/SASD-Harald)  
 > **Architecture:** [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)  
@@ -11,7 +11,7 @@
 
 HARALD is intended to become a free, open-source, offline-capable library and multimedia collection manager for physical and digital media. This roadmap turns the earlier requirements into **small, verifiable steps**. It does not imply that source code or releases already exist.
 
-**Present reality (October 2026):** A public repository, MIT license, README, conceptual UI screenshot, and an architecture proposal exist. Technology choices, product implementation, installation packages, and CI are not yet established. The items checked below refer to actual repository evidence rather than aspirations.
+**Current evidence (2026-10-26):** A locally tested **C++20/SQLite catalog CLI vertical slice**, schema v1, repository port, executable integration test and Linux CI workflow definition exist. **No full graphical UI, JSON adapter, real export/restore, complete circulation, stable release or accepted stack ADR** exists. CI workflow execution has not yet been verified.
 
 ## 1. How to read this roadmap
 
@@ -140,6 +140,8 @@ This is a **dependency illustration**. Parallel development is possible where in
 
 ### M2 — Build, repository, and quality foundation (P00)
 
+**Partial implementation (2026-10-26):** [Experimental C++ code](implementations/cpp/README.md) builds with CMake, has a framework-independent repository port and a SQLite schema-v1 implementation. GCC Debug/Release and Clang Debug CTest passed locally. A GitHub Linux CI definition exists, but its execution is **unverified**. M2 is not complete.
+
 **Deliverables**
 - [ ] Compile a minimal domain module with **no** ORM/UI/network imports.
 - [ ] Define application-use-case interfaces and persistence/storage ports.
@@ -159,6 +161,8 @@ This is a **dependency illustration**. Parallel development is possible where in
 
 ### M3 — First executable vertical slice (P01/P02)
 
+**Partial implementation (2026-10-26):** One work + edition + two independent copies can now be created, persisted, reopened, searched and inspected through a **working C++ CLI**. The optional SASD UI Toolkit TableModel/TableView target is a **source-only console preview** in this environment, not a finished graphical window. Cross-platform build, export/restore, stable portable IDs and full UI demonstration remain open, so **M3 stays incomplete**.
+
 **Scope:**
 - [ ] Create one work (e.g., a novel).
 - [ ] Attach one publication edition with creator and external identifiers.
@@ -176,7 +180,7 @@ This is a **dependency illustration**. Parallel development is possible where in
 
 R1 must stand alone as a useful small-library product; all R1 MUST requirements from the specification are release blockers unless explicitly changed.
 
-**Backend scope clarified:** V1 targets a local, configurable **SQLite/JSON** storage implementation first, with appropriate concurrency/restore tests. Remote **MySQL/MariaDB, PostgreSQL, Oracle and HARALD REST are architectural extension points**, not V1 release requirements. No adapter is implemented yet.
+**Backend scope clarified:** V1 targets a local, configurable **SQLite/JSON** storage implementation first, with appropriate concurrency/restore tests. Remote **MySQL/MariaDB, PostgreSQL, Oracle and HARALD REST are architectural extension points**, not V1 release requirements. Only an **experimental SQLite** adapter is implemented; JSON and remote adapters remain future work.
 
 ### M4 — Complete catalog, identities, and relationships (P01)
 

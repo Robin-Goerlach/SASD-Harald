@@ -23,7 +23,7 @@ Inspect the **current branch, files, latest commit, available toolchain and CI**
 
 ## 2. Current stage: no selected implementation stack
 
-As of this document, there is **no released application, no build system, no actual tests, and no final language/runtime/UI/database decision**. Do not invent install/build/test commands, binary releases or green CI results.
+As of 2026-10-26 there is **no released application or accepted final stack**, but an **experimental C++20/SQLite core, CLI, CMake build, and real integration tests** exist. See [the C++ README](implementations/cpp/README.md) for verified Linux commands. The graphical UI, Toolkit package integration, production backups and non-Linux builds remain unverified.
 
 - Do **not** introduce a production C#, C++, Java, Python, JavaScript, Qt, .NET, Electron or web stack without an accepted stack ADR or an explicitly requested scoped proof of concept.
 - No speculative dependency locks, Docker compose files, API specifications presented as stable, package badges or empty "all tests pass" workflows.
@@ -31,7 +31,7 @@ As of this document, there is **no released application, no build system, no act
 - A prototype must be labeled experimental. Do not permanently constrain architecture by choosing whichever framework happens to be easiest to scaffold.
 - Start with a small, executable work/edition/item vertical slice. Do not start with generic plugin infrastructure, an OPAC or a multimedia streaming engine.
 
-**Repository directories already prepared:** `implementations/csharp/`, `implementations/cpp/`, and `implementations/java/` contain **only planning READMEs and `.gitkeep` placeholders**. `shared/contracts/`, `shared/fixtures/`, and `shared/conformance/` have only guidance, not published protocols or passing tests. Read [MULTI_LANGUAGE.md](docs/architecture/MULTI_LANGUAGE.md) before adding language-specific code. Language folders do **not** approve multiple production backends or shared database writes.
+**Repository state:** `implementations/cpp/` now contains **actual C++ code, CMake, CLI, SQLite adapter and tests**, plus a **not-yet-compiled optional SASD UI Toolkit preview**. C# and Java remain placeholders. `shared/contracts/`, `shared/fixtures/`, and `shared/conformance/` have only guidance, not published protocols or passing tests. Read [MULTI_LANGUAGE.md](docs/architecture/MULTI_LANGUAGE.md) before adding language-specific code. Language folders do **not** approve multiple production backends or shared database writes.
 
 After the stack is accepted, update AGENTS.md with **real commands**, version requirements and source directories.
 

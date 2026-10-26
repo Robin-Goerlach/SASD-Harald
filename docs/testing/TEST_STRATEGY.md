@@ -1,7 +1,7 @@
 # HARALD — Test Strategy and Acceptance Evidence
 
 > Document: HARALD-TEST-001  
-> Status: Proposed quality plan, 2026-10-17. **No executable test suite or CI pipeline exists yet.**  
+> Status: Proposed quality plan, 2026-10-17. **The first real SQLite integration-test executable and Linux CI workflow definition exist as of 2026-10-26.** The local tests passed, but GitHub CI execution is unverified. The full release test suite remains planned.  
 > Related: [Roadmap](../../ROADMAP.md), [Requirements](../requirements/README.md), [Architecture](../architecture/ARCHITECTURE.md), [Agent instructions](../../AGENTS.md).
 
 ## 1. Purpose
@@ -9,6 +9,10 @@
 HARALD manages catalog identities, individually inventoried objects, active loans, personal membership information and potentially valuable or sensitive digital assets. The test strategy must prove **data integrity and authorizations under realistic failures**, not merely that user interface actions look correct.
 
 Test requirements should be mapped to the stable IDs in the original functional specification (CAT-*, CIR-*, DIG-*, SEC-*, NFR-*, AT-001–AT-024). R0/R1/R2/R3 scope is tracked in the roadmap. All tools and commands remain **TBD until the stack is accepted**.
+
+## Current execution evidence (2026-10-26)
+
+[The initial C++/SQLite test](../../implementations/cpp/tests/catalog_tests.cpp) exercises actual database persistence rather than mocks: one Work/Edition/two distinct copies, reopen, literal-search metacharacters, blank/duplicate validation, and atomic rollback on duplicate inventory codes. CTest passed locally with GCC Debug/Release and Clang Debug. Circulation concurrency, JSON, export/restore, security, graphical UI and non-Linux builds remain **untested and/or unimplemented**.
 
 ## 2. Principles
 

@@ -2,7 +2,7 @@
 
 Welcome to the project documentation for **HARALD**, an open-source multimedia library and collection management system.
 
-> **Current status (2026-10-17):** Planning / pre-alpha; design documents and a conceptual UI image exist, but there is no runnable product yet. All proposals, diagrams and example workflows are **future targets** unless accompanied by verified source and tests.
+> **Current status (2026-10-26):** Planning / pre-alpha with a **working experimental C++20 + SQLite catalog CLI**. There is still no full multimedia product, graphical desktop UI, tested backup/restore, or release. All proposals, diagrams and example workflows are **future targets** unless accompanied by verified source and tests.
 
 ## Quick navigation
 
@@ -14,7 +14,8 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | Architecture (German) | [ARCHITECTURE.md](architecture/ARCHITECTURE.md) | Core design, portability, extension model, rights, testing and open decisions |
 | Multi-language architecture (German) | [MULTI_LANGUAGE.md](architecture/MULTI_LANGUAGE.md) | C#, C++, Java layout; one backend vs independent implementations; contract boundaries |
 | Configurable data backends (German) | [STORAGE_PROVIDERS.md](architecture/STORAGE_PROVIDERS.md) | Local JSON/SQLite, remote MySQL/PostgreSQL/Oracle, REST, profile configuration and migration |
-| Language tracks | [implementations](../implementations/README.md) | Empty source/test directories with local guidance; no language chosen |
+| Language tracks | [implementations](../implementations/README.md) | C++ catalog experiment, C# and Java placeholders |
+| C++ catalog prototype | [C++ implementation](../implementations/cpp/README.md) | Verified Linux CMake/SQLite catalog CLI and tests; desktop UI still missing |
 | Shared cross-language material | [shared](../shared/README.md) | Future contracts, fixture samples and conformance checks |
 | Decisions | [ADR index](architecture/adr/README.md) | Proposed/accepted decisions and decision template |
 | Requirements | [Requirements index](requirements/README.md) | Status notes and full 2026 German Pflichtenheft |

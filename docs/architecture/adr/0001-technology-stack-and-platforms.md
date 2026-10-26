@@ -44,9 +44,15 @@ Do not treat the examples above as an approved dual implementation or a commitme
 
 ## Repository directory preparation (non-decision)
 
-The repository now contains **`implementations/csharp/`**, **`implementations/cpp/`**, **`implementations/java/`**, and **`shared/`** as **documentation and empty source/test placeholders**. See [MULTI_LANGUAGE.md](../MULTI_LANGUAGE.md).
+The repository now contains a **locally built experimental C++20 catalog slice** under `implementations/cpp/`; C# and Java remain placeholders and `shared/` remains guidance-only. See [MULTI_LANGUAGE.md](../MULTI_LANGUAGE.md).
 
 This does **not** favor any candidate, ratify this ADR, choose an authoritative backend, require three releases, or prove runtime/OS compatibility. The competing options and evidence requirements below remain open.
+
+## Evidence from C++ experiment (2026-10-26)
+
+[The first C++ slice](../../../implementations/cpp/README.md) now creates one Work, one Edition and two separate Physical Items, persists them through SQLite schema v1, and exposes a CLI. GCC/Clang integration tests passed locally on Linux. An optional SASD UI Toolkit `TableModel`/`TableView` console preview is present as source but was **not compiled against an installed toolkit**. No actual native graphical catalog window exists yet.
+
+This is **evidence in favor of feasibility**, not a finalized stack ADR. Java remains a valid alternative. Platform packaging, graphical UI and data portability still need proof.
 
 ## Proof-of-concept acceptance checklist
 

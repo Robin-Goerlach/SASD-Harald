@@ -8,6 +8,15 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Added — experimental catalog slice (2026-10-26)
+- First **C++20 Work → Edition → Physical Copy** implementation under `implementations/cpp/`.
+- Framework-independent `CatalogService` and `CatalogRepository` port; SQLite schema v1 with foreign keys and unique inventory barcodes.
+- Atomic insert-and-rollback, bound SQL parameters, literal book search, persisted records and a working `harald_cli`.
+- Integration tests against actual SQLite, compiled locally with GCC 14.2 Debug/Release and Clang Debug.
+- Optional SASD UI Toolkit TableModel/TableView **console preview source**, not a tested graphical app.
+- CMake build instructions, dedicated architecture note and Linux CI workflow definition (GitHub job execution unverified).
+
+
 ### Documentation
 - Added the user-requested configurable backend architecture with local JSON/SQLite, remote MySQL/MariaDB/PostgreSQL/Oracle and remote HARALD REST options; specified profile settings via UI/file, security constraints and migration checks. Introduced ADR-0004 as **Proposed**; no backend support was implemented.
 - Added draft requirements for tracking books intended for purchase and separate Dewey-compatible classification/shelfmark information, with acceptance cases and licensing notes. No runtime functionality has been added.

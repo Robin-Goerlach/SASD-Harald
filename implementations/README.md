@@ -1,6 +1,6 @@
 # HARALD — Language implementations
 
-> **Status: directory scaffold only (2026-10-17).** These directories contain no executable application, published library, build definitions, API implementation, or language-specific test suite. Their existence does **not** mean that three implementations have been approved for production or that any target platform is supported.
+> **Status (2026-10-26):** The **C++** track contains an experimental SQLite-backed catalog CLI, CMake build and tests; **C# and Java** remain placeholders. No full product or desktop GUI has been released. Their existence does **not** mean that three implementations have been approved for production or that any target platform is supported.
 
 This area accommodates independent, optional implementations or clients written in different languages. Initial **candidate languages** are **C#**, **C++**, and **Java**, motivated by the project's early technical discussions. New languages can be added later; none is the official runtime while [ADR-0001](../docs/architecture/adr/0001-technology-stack-and-platforms.md) remains Proposed.
 
@@ -17,11 +17,13 @@ implementations/
 │   ├── tests/                 # Verified C# tests, when implemented
 │   └── examples/              # Minimal examples, if needed
 ├── cpp/
-│   ├── README.md
-│   ├── include/               # Public C++ headers, if required
-│   ├── src/
-│   ├── tests/
-│   └── examples/
+│   ├── README.md              # Built and tested catalog slice
+│   ├── CMakeLists.txt          # Real C++20/SQLite build
+│   ├── include/               # harald/catalog.hpp
+│   ├── src/                   # Domain, SQLite, CLI, optional Toolkit preview
+│   ├── tests/                 # Real SQLite integration tests
+│   ├── docs/                  # Implementation architecture notes
+│   └── examples/              # Reserved
 └── java/
     ├── README.md
     ├── src/                   # Java sources; Maven/Gradle layout not chosen
@@ -29,7 +31,7 @@ implementations/
     └── examples/
 ```
 
-The **empty source/test/example folders are maintained by `.gitkeep`**. They deliberately do **not** contain placeholder source files that pretend to compile, package manifests, or "tests pass" boilerplate. Once a build system is chosen, replace placeholder organization with idiomatic, documented module boundaries.
+**Remaining empty** folders are maintained by `.gitkeep`; the C++ core, CLI and tests are now **real files**. They deliberately do **not** contain placeholder source files that pretend to compile, package manifests, or "tests pass" boilerplate. Once a build system is chosen, replace placeholder organization with idiomatic, documented module boundaries.
 
 ## What belongs where?
 

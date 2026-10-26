@@ -1,12 +1,28 @@
 # HARALD — Developer Setup and Engineering Workflow
 
-> Status: planning/pre-alpha. As of 2026-10-17 this repository has **no selected implementation stack, runnable source, package manager or build commands**.
+> **2026-10-26 update:** An experimental **C++20/SQLite catalog CLI** and real build/test commands now exist. No production release or accepted final language/GUI decision exists.
 
 ## Start here
 
 Read [AGENTS.md](../../AGENTS.md), [README.md](../../README.md), [ROADMAP.md](../../ROADMAP.md), [Architecture](../architecture/ARCHITECTURE.md), [ADR register](../architecture/adr/README.md) and [Test Strategy](../testing/TEST_STRATEGY.md).
 
 Current source tree contains planning/reference documents, artwork and the MIT license. Proposed code directories in the README are not existing files. Use GitHub Issues for concrete tasks; do not begin with an arbitrary framework scaffold while ADR-0001 is still Proposed.
+
+## First executable C++/SQLite slice (tested locally on Linux)
+
+Run these commands from the repository root. Requires CMake 3.20+, a C++20 compiler, and SQLite development headers/library:
+
+```sh
+cmake -S implementations/cpp -B implementations/cpp/build -DCMAKE_BUILD_TYPE=Debug
+cmake --build implementations/cpp/build --parallel
+ctest --test-dir implementations/cpp/build --output-on-failure
+./implementations/cpp/build/harald_cli --db /tmp/harald-demo.sqlite init
+./implementations/cpp/build/harald_cli --db /tmp/harald-demo.sqlite seed
+./implementations/cpp/build/harald_cli --db /tmp/harald-demo.sqlite list
+./implementations/cpp/build/harald_cli --db /tmp/harald-demo.sqlite show 1
+```
+
+The real use cases, CLI arguments, test evidence and limitations are described in [implementations/cpp/README.md](../../implementations/cpp/README.md). Do not use valuable library data in this prototype; backup/restore, access control and the graphical desktop UI are not yet implemented.
 
 ## Prerequisites — to be decided
 
