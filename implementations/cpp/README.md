@@ -40,7 +40,7 @@ The `add-book` demonstration is intentionally limited to **exactly two copies**.
 
 This small **opt-in** target integrates `StringTableModel`, `TableSelectionModel` and `TableView` with real HARALD catalog data. It prints visible table rows, selects the first result and displays its physical copies through `CatalogService::details()`; it **does not** create a graphical window. It is deliberately kept separate until the desired desktop host and toolkit version are validated.
 
-A separately installed SASD UI Toolkit CMake package version 0.2 or later is required; this optional target has **not** been built in the current execution environment, because that package is not installed there.
+A separately installed SASD UI Toolkit CMake package version 0.2 is required. The **pinned package consumer is exercised in GitHub Actions on Linux**; this does not imply manual visual testing.
 
 ```sh
 cmake -S implementations/cpp -B implementations/cpp/build-ui \
