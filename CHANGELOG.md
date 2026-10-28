@@ -8,6 +8,12 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Added — experimental native catalog browser (2026-10-28)
+- Toolkit-neutral `CatalogBrowser` presentation state and CTest scenarios for refresh, selection ID stability, Unicode, stale/deleted results, duplicate identities and exception-safe search.
+- Opt-in native Win32/GTK4 desktop catalog prototype with search field/button, TableView, selection-driven read-only details and status/error feedback. This is **not a stable GUI release** and has not been manually smoke-tested.
+- Linux CI GTK4 build-tree consumer compile path plus existing installed-toolkit console preview. Windows GUI runtime and installer validation remain open.
+
+
 ### Added — catalog presentation selection bridge (2026-10-28)
 - New toolkit-neutral `HARALD::CatalogPresentation` C++ target; owned book-table projection stores edition identities separately from display rows and rejects invalid/duplicate identities.
 - Standalone CTest coverage for Unicode rows, stale selection, reorder/filter identity preservation and independent display-string ownership.

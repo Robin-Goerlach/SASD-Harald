@@ -77,3 +77,21 @@ The UI Toolkit remains a **versioned, optional dependency**; HARALD core builds 
 `HARALD::CatalogPresentation` contains `CatalogTableProjection`, an owned presentation-layer snapshot. It depends on the existing application DTO `BookSummary`, **not** SQLite or `sasd::ui`. Its five display cells are transient values, while each row's edition identity remains an `Id` in the snapshot. UI adapters should obtain an ID using `editionIdAt()` before calling `CatalogService::details()`; on refresh, keep the ID rather than the old table position and use `rowForEdition()` to reselect it. Stale rows, non-positive IDs and duplicate IDs fail closed.
 
 The optional UI preview now programmatically selects the first cell and requests copy details through `CatalogService`. This is a testable intermediate binding, **not a user-interactive desktop window**. The UI Toolkit 0.2 package and a concrete native/SDL host are deliberately not bundled with HARALD.
+
+## First native catalog host and search coordinator (2026-10-28)
+
+The new `CatalogBrowser` is an application-facing **presentation coordinator**, not a repository and not a widget. It prepares a validated, value-owned `CatalogTableProjection` from `CatalogService::search()` and loads details by ID through `CatalogService::details()`. This allows mock-repository headless tests (reorder, invalid ID, deletion, exceptions) without linking any toolkit. Both optional UI consumers share this coordinator.
+
+```text
+Win32/GTK4 host -> SASD UI widgets -> HARALD CatalogBrowser
+                                             |
+                                       CatalogService
+                                             |
+                                       CatalogRepository
+                                             ^
+                                        SqliteCatalog
+```
+
+The optional native desktop uses SASD UI 0.2 `Window`, `TextField`, `Button`, `TableView`, `TableSelectionModel`, `RenderedPresentationSink`, and the public native Win32/GTK4 backends. It does not use a private toolkit header. Win32 is exported as an installed CMake target; GTK4 currently requires building toolkit sources in an explicitly named sibling directory. Neither enters the default build. Native input and layout still require physical desktop smoke testing; Linux CI will only compile this target and exercise headless tests.
+
+The first detail pane is read-only and intentionally limited to three copy lines, while the coordinator retains all `BookDetails` data. Do not mark full catalog UI, pagination, data migration or authorization as implemented.
