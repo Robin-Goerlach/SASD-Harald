@@ -11,7 +11,7 @@
 
 HARALD is intended to become a free, open-source, offline-capable library and multimedia collection manager for physical and digital media. This roadmap turns the earlier requirements into **small, verifiable steps**. It does not imply that source code or releases already exist.
 
-**Current evidence (2026-10-26):** A locally tested **C++20/SQLite catalog CLI vertical slice**, schema v1, repository port, executable integration test and Linux CI workflow definition exist. **No full graphical UI, JSON adapter, real export/restore, complete circulation, stable release or accepted stack ADR** exists. CI workflow execution has not yet been verified.
+**Current evidence (2026-10-28):** A working experimental **C++20/SQLite catalog CLI vertical slice**, CTest, a toolkit-neutral catalog table projection, and an optional **headless** SASD UI Toolkit selection-and-details console consumer exist. Linux GitHub Actions already passed GCC/Clang Debug/Release and an installed UI Toolkit 0.2 consumer build. **No full graphical UI, JSON adapter, real export/restore, complete circulation, stable release or accepted stack ADR** exists.
 
 ## 1. How to read this roadmap
 
@@ -64,9 +64,9 @@ The architecture proposes a **modular monolith**, a small/self-hosted operating 
 | Architecture proposal | Complete as **draft** | docs/architecture/ARCHITECTURE.md; review and ADRs still outstanding |
 | Functional requirements | Drafted; review/approval outstanding | docs/requirements |
 | Stack and supported-platform decision | Open | Accepted ADR + proof-of-concept builds |
-| Source tree/build system | Not implemented | Reproducible fresh build |
-| Automated CI/testing | Not implemented | Real workflows and passing logs |
-| Working application | Not implemented | Demonstrable R0 vertical slice |
+| Source tree/build system | Experimental C++20/CMake catalog implemented | Verify supported platform/toolchain matrix |
+| Automated CI/testing | Linux GCC/Clang CTest and installed UI Toolkit headless consumer verified in GitHub Actions | Add non-Linux verification and wider negative tests |
+| Working application | Experimental SQLite catalog CLI; optional headless TableView preview | Actual graphical host and full M3 acceptance |
 | Alpha/beta/stable release | None | Tagged release artifacts and acceptance evidence |
 
 ## 4. Milestone dependency overview
@@ -140,7 +140,7 @@ This is a **dependency illustration**. Parallel development is possible where in
 
 ### M2 — Build, repository, and quality foundation (P00)
 
-**Partial implementation (2026-10-26):** [Experimental C++ code](implementations/cpp/README.md) builds with CMake, has a framework-independent repository port and a SQLite schema-v1 implementation. GCC Debug/Release and Clang Debug CTest passed locally. A GitHub Linux CI definition exists, but its execution is **unverified**. M2 is not complete.
+**Partial implementation (2026-10-26):** [Experimental C++ code](implementations/cpp/README.md) builds with CMake, has a framework-independent repository port and a SQLite schema-v1 implementation. GCC Debug/Release and Clang Debug CTest passed locally on 2026-10-26. Linux GitHub Actions subsequently passed a GCC/Clang Debug/Release matrix; C++ projection tests and the installed SASD UI Toolkit 0.2 headless consumer were added by 2026-10-28. M2 is not complete.
 
 **Deliverables**
 - [ ] Compile a minimal domain module with **no** ORM/UI/network imports.
@@ -161,7 +161,7 @@ This is a **dependency illustration**. Parallel development is possible where in
 
 ### M3 — First executable vertical slice (P01/P02)
 
-**Partial implementation (2026-10-26):** One work + edition + two independent copies can now be created, persisted, reopened, searched and inspected through a **working C++ CLI**. The optional SASD UI Toolkit TableModel/TableView target is a **source-only console preview** in this environment, not a finished graphical window. Cross-platform build, export/restore, stable portable IDs and full UI demonstration remain open, so **M3 stays incomplete**.
+**Partial implementation (2026-10-26):** One work + edition + two independent copies can now be created, persisted, reopened, searched and inspected through a **working C++ CLI**. The optional SASD UI Toolkit TableModel/TableView target is a **built and tested headless console preview in Linux CI**, not a finished graphical window. A toolkit-neutral projection stores edition IDs independently of volatile table rows. Cross-platform build, export/restore, stable portable IDs and full UI demonstration remain open, so **M3 stays incomplete**.
 
 **Scope:**
 - [ ] Create one work (e.g., a novel).
