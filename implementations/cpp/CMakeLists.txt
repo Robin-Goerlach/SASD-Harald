@@ -4,10 +4,19 @@ project(HARALD VERSION 0.0.1 LANGUAGES CXX)
 include(CTest)
 find_package(SQLite3 REQUIRED)
 
+# CMake's FindSQLite3 target was renamed in newer toolchain releases.
+# Prefer the current canonical target but retain CMake 3.20 compatibility on
+# older Linux/BSD distributions. This also avoids vcpkg's deprecation notice.
+if(TARGET SQLite3::SQLite3)
+    set(_harald_sqlite_target SQLite3::SQLite3)
+else()
+    set(_harald_sqlite_target SQLite::SQLite3)
+endif()
+
 add_library(harald_catalog STATIC src/catalog.cpp src/sqlite_catalog.cpp)
 add_library(HARALD::Catalog ALIAS harald_catalog)
 target_include_directories(harald_catalog PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(harald_catalog PUBLIC SQLite::SQLite3)
+target_link_libraries(harald_catalog PUBLIC ${_harald_sqlite_target})
 target_compile_features(harald_catalog PUBLIC cxx_std_20)
 
 if(MSVC)
