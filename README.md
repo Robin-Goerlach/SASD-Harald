@@ -2,7 +2,7 @@
 
 **Open-source library and multimedia collection management**
 
-> **Project status: Planning / pre-alpha.** HARALD is a new project. The features described below are a **product vision and development plan**, not functionality already available in a released application. As of 26 October 2026, this repository also contains an **experimental C++20/SQLite catalog CLI**. This is **not** yet the full application, a graphical desktop program, or an installer.
+> **Project status: Planning / pre-alpha.** HARALD is a new project. The features described below are a **product vision and development plan**, not functionality already available in a released application. As of 28 October 2026, this repository contains an **experimental C++20/SQLite catalog CLI**, headless catalog model/view tests, and an **opt-in native Windows/GTK4 catalog browser prototype**. This is **not** yet the full application, a stable graphical desktop release, or an installer.
 
 HARALD aims to provide a **free, self-hostable, offline-capable, and extensible system** for cataloging, organizing, finding, inventorying, and lending physical and digital media. Rather than requiring separate applications for books, film collections, audio recordings, and e-books, HARALD is designed around a consistent model that can describe all of them without losing their differences.
 
@@ -74,7 +74,7 @@ HARALD is **not yet a working library application**.
 | Implementation language and UI framework | Not selected |
 | Database implementation and schema migrations | Experimental SQLite schema v1 in C++ slice; JSON and remote providers planned |
 | Catalog, inventory, lending, and search | Experimental book create/search/detail and copy inventory slice; lending not implemented |
-| Web interface, desktop interface, and public catalog | Planned / under evaluation |
+| Web interface, desktop interface, and public catalog | Experimental opt-in Win32/GTK4 catalog browse/search window; full desktop editing, OPAC and web UI not implemented |
 | Installers, containers, downloadable binaries | Not available |
 | Automated tests and CI pipeline | C++/SQLite integration tests passed locally on Linux; GitHub CI workflow added, run pending |
 | Stable API, plugin SDK, and data exchange schema | Not yet published |
@@ -115,7 +115,7 @@ These are **proposals pending scope and release-priority review**, not implement
 
 ## Multiple implementation languages
 
-HARALD has a tested **[experimental C++20/SQLite catalog implementation](implementations/cpp/README.md)** with CLI, a domain/application repository boundary, SQL migration v1 and integration tests. An **optional SASD UI Toolkit TableView console preview** source target exists but has not been built locally. **[C#](implementations/csharp/README.md)** and **[Java](implementations/java/README.md)** remain placeholders.
+HARALD has a tested **[experimental C++20/SQLite catalog implementation](implementations/cpp/README.md)** with CLI, a domain/application repository boundary, SQL migration v1 and integration tests. An **optional SASD UI Toolkit TableView console preview** and an **experimental native catalog window** exist. The native window is opt-in, still requires a manual desktop smoke test and is not a full application. **[C#](implementations/csharp/README.md)** and **[Java](implementations/java/README.md)** remain placeholders.
 
 [implementations/README.md](implementations/README.md) explains the language folders; [shared/](shared/README.md) reserves space for future language-independent contracts, fixtures, and conformance tests. The [multilanguage architecture proposal](docs/architecture/MULTI_LANGUAGE.md) discusses **one backend plus clients** versus **independent implementations**.
 
