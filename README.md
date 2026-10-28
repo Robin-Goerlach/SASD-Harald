@@ -71,7 +71,7 @@ HARALD is **not yet a working library application**.
 | Open-source license | MIT license present |
 | Product scope and feature planning | Drafted; subject to refinement |
 | C#, C++, and Java directories | Experimental C++20 source and tests; C# and Java remain placeholders |
-| Implementation language and UI framework | Not selected |
+| Implementation language and UI framework | C++20 / SASD UI Toolkit selected for the first experimental implementation; final supported release configuration and ADR review remain open |
 | Database implementation and schema migrations | Experimental SQLite schema v1 in C++ slice; JSON and remote providers planned |
 | Catalog, inventory, lending, and search | Experimental book create/search/detail and copy inventory slice; lending not implemented |
 | Web interface, desktop interface, and public catalog | Experimental opt-in Win32/GTK4 catalog browse/search window; full desktop editing, OPAC and web UI not implemented |
