@@ -141,15 +141,15 @@ The headless `harald_catalog_table_projection_tests` is enabled by the default C
 
 ### New book form and native smoke test (experimental, 28 October 2026)
 
-Click **New book** and enter title, author/creator, edition, optional ISBN, inventory code and physical location. A successful **Save book** calls the same \`CatalogService::createBook()\` used by the CLI, commits Work/Edition/Copy atomically, returns to the catalog, clears the search filter and attempts to select the new edition by typed ID. **Cancel** makes no database changes. On a validation/storage error, the editor remains open with its entered text intact. The form is deliberately limited to **one physical copy**; additional copies and zero-copy/digital-only editions require separate business requirements.
+Click **New book** and enter title, author/creator, edition, optional ISBN, inventory code and physical location. A successful **Save book** calls the same `CatalogService::createBook()` used by the CLI, commits Work/Edition/Copy atomically, returns to the catalog, clears the search filter and attempts to select the new edition by typed ID. **Cancel** makes no database changes. On a validation/storage error, the editor remains open with its entered text intact. The form is deliberately limited to **one physical copy**; additional copies and zero-copy/digital-only editions require separate business requirements.
 
-Automated \`harald_book_entry_tests\` invokes the real SQLite adapter, including persistence after reopen and rollback on a duplicate inventory code. Linux CI also uses \`xvfb-run\` to start GTK4 and render an initial frame. This checks only native startup and renderer integration, **not interactive behavior**.
+Automated `harald_book_entry_tests` invokes the real SQLite adapter, including persistence after reopen and rollback on a duplicate inventory code. Linux CI also uses `xvfb-run` to start GTK4 and render an initial frame. This checks only native startup and renderer integration, **not interactive behavior**.
 
 Use a disposable test database for smoke tests:
 
-\`\`\`sh
+```sh
 ./build-harald-desktop/harald_cli --db /tmp/harald-smoke.sqlite seed
 xvfb-run -a ./build-harald-desktop/harald_desktop /tmp/harald-smoke.sqlite --smoke
-\`\`\`
+```
 
 Windows CI compiles the native Win32 target against a pinned installed Toolkit 0.2 package, with SQLite supplied through vcpkg, and executes the same four headless CTests. Successful CI does not imply that a person has verified the visual UI. **MSVC and Windows CI results should be checked for each commit before a merge.**
