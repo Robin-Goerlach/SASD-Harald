@@ -77,7 +77,8 @@ CLI (now) / SASD UI Adapter (optional) / future REST/UI clients
 - [`src/catalog.cpp`](src/catalog.cpp): independent validation and application use cases.
 - [`src/sqlite_catalog.cpp`](src/sqlite_catalog.cpp): concrete SQLite access, migration and transactions.
 - [`src/main.cpp`](src/main.cpp): minimal command-line host.
-- [`src/catalog_table_projection.cpp`](src/catalog_table_projection.cpp): toolkit-independent, owned table/edition-ID projection with negative and Unicode tests.\n- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit table-model consumer, now with selection-driven details lookup.
+- [`src/catalog_table_projection.cpp`](src/catalog_table_projection.cpp): toolkit-independent, owned table/edition-ID projection with negative and Unicode tests.
+- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit table-model consumer, now with selection-driven details lookup.
 - [`tests/catalog_tests.cpp`](tests/catalog_tests.cpp): integration tests using real SQLite.
 - [`docs/ARCHITECTURE_SLICE.md`](docs/ARCHITECTURE_SLICE.md): implementation boundaries, deliberate limitations and next increment.
 
@@ -103,4 +104,4 @@ Implement a genuine desktop host on a tested SASD UI Toolkit package. Reuse the 
 
 `HARALD::CatalogPresentation` adds `CatalogTableProjection`: an owned, five-column snapshot of `CatalogService::search()` results, independent of SQLite and SASD UI. The projection validates that edition IDs are positive and unique; `editionIdAt(row)` converts a selected table row into an authoritative application ID, and `rowForEdition(id)` can restore selection after filtering/reordering. A stale row returns no ID, not an unrelated record. This does **not** create globally portable IDs; that requires a separate design/migration step.
 
-The headless `harald_catalog_table_projection_tests` is enabled by the default CTest configuration and exercises Unicode, selection after reorder/filter, owned snapshot values, invalid/duplicate IDs, and stale rows. The optional `harald_ui_preview` is still **not verified** against an installed UI Toolkit in this development environment, and remains a console demo. A real SDL/native desktop host and interactive search remain future work.
+The headless `harald_catalog_table_projection_tests` is enabled by the default CTest configuration and exercises Unicode, selection after reorder/filter, owned snapshot values, invalid/duplicate IDs, and stale rows. An additional Linux CI job builds the pinned SASD UI Toolkit (commit `2dd0b6f`, 0.2.0) as an installed package and compiles/runs the optional headless preview. Its actual outcome must be checked in GitHub Actions; the preview remains a console demo, not a graphical application. A real SDL/native desktop host and interactive search remain future work.
