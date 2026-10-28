@@ -61,15 +61,15 @@ On **Windows**, install a compatible SASD UI Toolkit 0.2 CMake package with its 
 cmake -S implementations/cpp -B build-harald-desktop -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
 cmake --build build-harald-desktop --config Debug
 ctest --test-dir build-harald-desktop -C Debug --output-on-failure
-.\\build-harald-desktop\\Debug\\harald_cli.exe --db "$env:TEMP\\harald-demo.sqlite" seed
-.\\build-harald-desktop\\Debug\\harald_desktop.exe "$env:TEMP\\harald-demo.sqlite"
+.\build-harald-desktop\Debug\harald_cli.exe --db "$env:TEMP\harald-demo.sqlite" seed
+.\build-harald-desktop\Debug\harald_desktop.exe "$env:TEMP\harald-demo.sqlite"
 ```
 
 On **Linux**, GTK4 is *not* installed/exported by the pinned toolkit 0.2 CMake package. Its public native GTK target is currently **build-tree-only**. Install `libsqlite3-dev`, `libgtk-4-dev`, `pkg-config` and a C++20 toolchain; check out the toolkit separately and provide its source directory explicitly:
 
 ```sh
-cmake -S implementations/cpp -B build-harald-desktop -DCMAKE_BUILD_TYPE=Debug \\
-  -DHARALD_WITH_DESKTOP=ON \\
+cmake -S implementations/cpp -B build-harald-desktop -DCMAKE_BUILD_TYPE=Debug \
+  -DHARALD_WITH_DESKTOP=ON \
   -DHARALD_SASD_UI_SOURCE_DIR=/path/to/SASD-UI-Toolkit
 cmake --build build-harald-desktop --parallel 2
 ctest --test-dir build-harald-desktop --output-on-failure
