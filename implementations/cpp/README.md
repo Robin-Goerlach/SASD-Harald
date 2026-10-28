@@ -1,6 +1,6 @@
 # HARALD — First C++20 catalog implementation slice
 
-> **Status: experimental, not HARALD V1.0.** This directory contains real, tested source code for a small SQLite-backed catalog. It does **not** yet implement circulation, media profiles, configurable JSON backends, acquisitions, export/backup, security, or a graphical desktop application. The optional SASD UI Toolkit target is a **headless model/view preview**, not the finished screen shown in the repository README.
+> **Status: experimental, not HARALD V1.0.** This directory contains real, tested source code for a small SQLite-backed catalog. It does **not** yet implement circulation, media profiles, configurable JSON backends, acquisitions, export/backup, security, or a finished graphical desktop application. An **experimental optional native Windows/GTK4 catalog window** now exists alongside the headless TableView preview; it is not the finished screen shown in the repository README.
 
 This is the **M2/M3 exploratory vertical slice**. The main project remains in planning; an accepted stack ADR and a complete supported-OS matrix are still pending.
 
@@ -51,6 +51,34 @@ cmake --build implementations/cpp/build-ui --parallel
 ./implementations/cpp/build-ui/harald_ui_preview /tmp/harald-demo.sqlite
 ```
 
+### Optional native desktop catalog window (experimental, 28 October 2026)
+
+`harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection and a read-only detail pane. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search prototype**, not a full create/edit UI. Detail output shows at most three copy lines; no scrolling/pagination or accessibility acceptance is claimed.
+
+On **Windows**, install a compatible SASD UI Toolkit 0.2 CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Then use a CMake generator matching the toolkit installation:
+
+```powershell
+cmake -S implementations/cpp -B build-harald-desktop -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
+cmake --build build-harald-desktop --config Debug
+ctest --test-dir build-harald-desktop -C Debug --output-on-failure
+.\\build-harald-desktop\\Debug\\harald_cli.exe --db "$env:TEMP\\harald-demo.sqlite" seed
+.\\build-harald-desktop\\Debug\\harald_desktop.exe "$env:TEMP\\harald-demo.sqlite"
+```
+
+On **Linux**, GTK4 is *not* installed/exported by the pinned toolkit 0.2 CMake package. Its public native GTK target is currently **build-tree-only**. Install `libsqlite3-dev`, `libgtk-4-dev`, `pkg-config` and a C++20 toolchain; check out the toolkit separately and provide its source directory explicitly:
+
+```sh
+cmake -S implementations/cpp -B build-harald-desktop -DCMAKE_BUILD_TYPE=Debug \\
+  -DHARALD_WITH_DESKTOP=ON \\
+  -DHARALD_SASD_UI_SOURCE_DIR=/path/to/SASD-UI-Toolkit
+cmake --build build-harald-desktop --parallel 2
+ctest --test-dir build-harald-desktop --output-on-failure
+./build-harald-desktop/harald_cli --db /tmp/harald-desktop.sqlite seed
+./build-harald-desktop/harald_desktop /tmp/harald-desktop.sqlite
+```
+
+Use a **throwaway SQLite file** for the first interactive run. A GUI smoke test on a physical Windows/Linux session is still required; automated headless compilation alone does not prove native events, resizing and international text entry.
+
 ### Tests performed (26 October 2026, local environment)
 
 - GCC 14.2 Debug build and CTest — passed.
@@ -78,7 +106,7 @@ CLI (now) / SASD UI Adapter (optional) / future REST/UI clients
 - [`src/sqlite_catalog.cpp`](src/sqlite_catalog.cpp): concrete SQLite access, migration and transactions.
 - [`src/main.cpp`](src/main.cpp): minimal command-line host.
 - [`src/catalog_table_projection.cpp`](src/catalog_table_projection.cpp): toolkit-independent, owned table/edition-ID projection with negative and Unicode tests.
-- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit table-model consumer, now with selection-driven details lookup.
+- [`src/catalog_browser.cpp`](src/catalog_browser.cpp): UI-independent search/selection/details controller with typed IDs, refresh identity preservation and failure atomicity.\n- [`tests/catalog_browser_tests.cpp`](tests/catalog_browser_tests.cpp): deterministic tests for Unicode, filter/reorder, deletion, stale selection and repository failure.\n- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit console consumer bound through CatalogBrowser.\n- [`src/desktop_main.cpp`](src/desktop_main.cpp): optional native Win32/GTK4 interactive catalog browser.
 - [`tests/catalog_tests.cpp`](tests/catalog_tests.cpp): integration tests using real SQLite.
 - [`docs/ARCHITECTURE_SLICE.md`](docs/ARCHITECTURE_SLICE.md): implementation boundaries, deliberate limitations and next increment.
 
@@ -94,14 +122,18 @@ A SQLite file in this prototype is not a general cross-language interchange cont
 - IDs are SQLite-generated integers in this proof-of-concept; stable cross-backend IDs and migration policy remain an ADR decision.
 - No portable backup/restore or JSON migration exists; this prototype is **not suitable for irreplaceable library data**.
 - Concurrency and schema upgrades beyond v1 still need design and testing.
-- The optional toolkit preview is not yet a graphical catalog window and is not verified in the local environment.
+- The console preview remains headless. The new native window is experimental, needs a desktop smoke test, and has no book editing, accessible keyboard grid acceptance or detailed copy scrolling yet.
 
 ## Next increment
 
-Implement a genuine desktop host on a tested SASD UI Toolkit package. Reuse the same `CatalogService` and add a search box, `TableView`, selection-driven detail display and a new-book dialog without putting SQL calls in any widget. Expand automated tests to include UI model adapter behavior, Windows build verification, Unicode and domain error categories. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
+Manually smoke-test the experimental native host on Windows and Linux, validate keyboard focus/text input and pointer selection, then add an independently testable new-book form through `CatalogService::createBook()` (no SQL in widgets). Expand Windows CI, Unicode coverage and domain error categories. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
 
 ### Catalog selection bridge (experimental, 28 October 2026)
 
 `HARALD::CatalogPresentation` adds `CatalogTableProjection`: an owned, five-column snapshot of `CatalogService::search()` results, independent of SQLite and SASD UI. The projection validates that edition IDs are positive and unique; `editionIdAt(row)` converts a selected table row into an authoritative application ID, and `rowForEdition(id)` can restore selection after filtering/reordering. A stale row returns no ID, not an unrelated record. This does **not** create globally portable IDs; that requires a separate design/migration step.
 
 The headless `harald_catalog_table_projection_tests` is enabled by the default CTest configuration and exercises Unicode, selection after reorder/filter, owned snapshot values, invalid/duplicate IDs, and stale rows. An additional Linux CI job builds the pinned SASD UI Toolkit (commit `2dd0b6f`, 0.2.0) as an installed package and compiles/runs the optional headless preview. Its actual outcome must be checked in GitHub Actions; the preview remains a console demo, not a graphical application. A real SDL/native desktop host and interactive search remain future work.
+
+### Native catalog browser coordinator (experimental, 28 October 2026)
+
+`CatalogBrowser` retains an owned `CatalogTableProjection`, applied filter, selected **Edition ID** and optional owned `BookDetails`. Selecting a table row is translated into the stable edition ID before querying the service. After search the selected ID survives **reorder** but not filtering/removal. Repository exceptions leave the prior visible snapshot intact. `StringTableModel::reset()` invalidates toolkit positional selection; the desktop adapter deliberately suppresses transient deselection notifications and then reselects by the preserved ID. These behaviors are covered by a new default-build CTest. Neither `HARALD::Catalog` nor `HARALD::CatalogPresentation` depends on SASD UI.
