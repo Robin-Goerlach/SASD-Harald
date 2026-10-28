@@ -23,7 +23,8 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | Research | [Research index](research/README.md) | Full 24-program feature catalog and F001–F110 |
 | Testing | [TEST_STRATEGY.md](testing/TEST_STRATEGY.md) | Golden fixtures, invariant tests, concurrency, security and acceptance evidence |
 | Operating HARALD | [OPERATIONS.md](operations/OPERATIONS.md) | Proposed backup/restore, upgrade, deployment and incident model |
-| Development | [DEVELOPMENT.md](development/DEVELOPMENT.md) | Pre-stack status and future build workflow |
+| Development | [DEVELOPMENT.md](development/DEVELOPMENT.md) | Existing C++20/SQLite build instructions and engineering workflow |
+| New development/debugging chat | [Copy-ready HARALD chat prompt (German)](development/DEVELOPMENT_AND_DEBUG_CHAT_PROMPT.md) | Detailed reusable prompt for continued C++ development, architecture, debugging, GitHub and tests |
 | API/integration | [API guide](api/README.md) | Versioning, permissions and conceptual use cases (no API exists yet) |
 | Migration | [Migration plan](migration/README.md) | Round-trip data ownership and adapter strategy |
 | End-user guide | [User guide outline](user-guide/README.md) | Planned catalog and lending workflows |

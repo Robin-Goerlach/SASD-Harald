@@ -6,7 +6,11 @@
 
 Read [AGENTS.md](../../AGENTS.md), [README.md](../../README.md), [ROADMAP.md](../../ROADMAP.md), [Architecture](../architecture/ARCHITECTURE.md), [ADR register](../architecture/adr/README.md) and [Test Strategy](../testing/TEST_STRATEGY.md).
 
-Current source tree contains planning/reference documents, artwork and the MIT license. Proposed code directories in the README are not existing files. Use GitHub Issues for concrete tasks; do not begin with an arbitrary framework scaffold while ADR-0001 is still Proposed.
+Current source tree includes a real experimental C++20/SQLite CLI and tests, alongside planning/reference documents, artwork and the MIT license. C# and Java remain placeholder tracks. Use GitHub Issues for larger tasks and do not introduce a competing framework scaffold while ADR-0001 remains Proposed.
+
+## Start a dedicated development and debugging chat
+
+For future development sessions, copy the complete [HARALD development and debugging chat prompt](DEVELOPMENT_AND_DEBUG_CHAT_PROMPT.md) into a new chat. It describes the current code, architectural boundaries, the separate SASD UI Toolkit, testing/commit requirements, and the next incremental desktop GUI work. Always re-check the repository status before acting on its historical snapshot.
 
 ## First executable C++/SQLite slice (tested locally on Linux)
 
