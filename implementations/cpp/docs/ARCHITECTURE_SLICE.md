@@ -4,7 +4,7 @@
 
 ## Scope deliberately limited
 
-The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. A SASD UI Toolkit `TableModel`/`TableView` consumer is present as an optional build target but is **not yet a graphical application**.
+The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. The optional SASD UI Toolkit consumer now has a **console preview** and an **experimental native Win32/GTK4 window** for search, selection, details and one-copy book creation; neither is a stable release.
 
 This slice verifies layer boundaries before adding borrowing, media-specific metadata, procurement, classification or remote backends.
 
@@ -58,13 +58,13 @@ The eventual switch between named backend profiles, schema version negotiation a
 
 The optional [`ui_preview.cpp`](../src/ui_preview.cpp) uses `StringTableModel`, `TableSelectionModel` and a virtualized `TableView` from the separately maintained [SASD UI Toolkit](https://github.com/Robin-Goerlach/SASD-UI-Toolkit). It exposes *snapshot strings*, not database handles, to the presentation widgets. It currently prints the visible rows as a contract demonstration.
 
-A real window requires an appropriate Toolkit host/backend, layout and event loop integration, selection and query update handling, and additional UI components. None should leak into the domain/application library.
+The experimental real window now uses Toolkit 0.2 Win32/GTK4 hosts, a rendered event loop and an inline creation form. It still needs manual keyboard/IME, mouse, accessibility and responsive-layout acceptance; these host details must remain outside the domain/application library.
 
 The UI Toolkit remains a **versioned, optional dependency**; HARALD core builds and tests without it.
 
 ## Next architectural hardening
 
-1. Verify the optional SASD UI integration against a checked-out and installed version of the toolkit, including Windows/Linux runtime presentation.
+1. Complete physical Windows/Linux manual interactive smoke testing of the optional native host; CI now covers Linux Xvfb startup, Windows compile and headless application tests.
 2. Add editor/search flows and a detail panel, keeping all data mutations in application commands.
 3. Provide stable cross-storage record identities, a v2 schema plan, migration and roll-back tests.
 4. Add secure JSON persistence and compare adapter conformance against SQLite.
