@@ -18,7 +18,7 @@ endif()
 
 # Presentation projection deliberately does not import SASD UI or SQLite headers.
 # It can be built and tested even when a desktop backend is unavailable.
-add_library(harald_catalog_presentation STATIC src/catalog_table_projection.cpp)
+add_library(harald_catalog_presentation STATIC src/catalog_table_projection.cpp src/catalog_browser.cpp)
 add_library(HARALD::CatalogPresentation ALIAS harald_catalog_presentation)
 target_include_directories(harald_catalog_presentation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(harald_catalog_presentation PUBLIC HARALD::Catalog)
@@ -46,6 +46,13 @@ if(BUILD_TESTING)
         target_compile_options(harald_catalog_table_projection_tests PRIVATE /utf-8)
     endif()
     add_test(NAME harald_catalog_table_projection_tests COMMAND harald_catalog_table_projection_tests)
+
+    add_executable(harald_catalog_browser_tests tests/catalog_browser_tests.cpp)
+    target_link_libraries(harald_catalog_browser_tests PRIVATE HARALD::CatalogPresentation)
+    if(MSVC)
+        target_compile_options(harald_catalog_browser_tests PRIVATE /utf-8)
+    endif()
+    add_test(NAME harald_catalog_browser_tests COMMAND harald_catalog_browser_tests)
 endif()
 
 # Optional integration with the separately versioned SASD UI Toolkit. This
