@@ -4,7 +4,7 @@
 
 ## Scope deliberately limited
 
-The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. A SASD UI Toolkit `TableModel`/`TableView` consumer is present as an optional build target but is **not yet a graphical application**.
+The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. The optional SASD UI Toolkit consumer now has a **console preview** and an **experimental native Win32/GTK4 window** for search, selection, details and one-copy book creation; neither is a stable release.
 
 This slice verifies layer boundaries before adding borrowing, media-specific metadata, procurement, classification or remote backends.
 
@@ -58,13 +58,13 @@ The eventual switch between named backend profiles, schema version negotiation a
 
 The optional [`ui_preview.cpp`](../src/ui_preview.cpp) uses `StringTableModel`, `TableSelectionModel` and a virtualized `TableView` from the separately maintained [SASD UI Toolkit](https://github.com/Robin-Goerlach/SASD-UI-Toolkit). It exposes *snapshot strings*, not database handles, to the presentation widgets. It currently prints the visible rows as a contract demonstration.
 
-A real window requires an appropriate Toolkit host/backend, layout and event loop integration, selection and query update handling, and additional UI components. None should leak into the domain/application library.
+The experimental real window now uses Toolkit 0.2 Win32/GTK4 hosts, a rendered event loop and an inline creation form. It still needs manual keyboard/IME, mouse, accessibility and responsive-layout acceptance; these host details must remain outside the domain/application library.
 
 The UI Toolkit remains a **versioned, optional dependency**; HARALD core builds and tests without it.
 
 ## Next architectural hardening
 
-1. Verify the optional SASD UI integration against a checked-out and installed version of the toolkit, including Windows/Linux runtime presentation.
+1. Complete physical Windows/Linux manual interactive smoke testing of the optional native host; CI now covers Linux Xvfb startup, Windows compile and headless application tests.
 2. Add editor/search flows and a detail panel, keeping all data mutations in application commands.
 3. Provide stable cross-storage record identities, a v2 schema plan, migration and roll-back tests.
 4. Add secure JSON persistence and compare adapter conformance against SQLite.
@@ -95,3 +95,14 @@ Win32/GTK4 host -> SASD UI widgets -> HARALD CatalogBrowser
 The optional native desktop uses SASD UI 0.2 `Window`, `TextField`, `Button`, `TableView`, `TableSelectionModel`, `RenderedPresentationSink`, and the public native Win32/GTK4 backends. It does not use a private toolkit header. Win32 is exported as an installed CMake target; GTK4 currently requires building toolkit sources in an explicitly named sibling directory. Neither enters the default build. Native input and layout still require physical desktop smoke testing; Linux CI will only compile this target and exercise headless tests.
 
 The first detail pane is read-only and intentionally limited to three copy lines, while the coordinator retains all `BookDetails` data. Do not mark full catalog UI, pagination, data migration or authorization as implemented.
+
+
+## Native book-create form and host startup verification (2026-10-28)
+
+`BookEntryController` is a tiny presentation-facing command adapter, with no SASD UI or SQLite includes. It converts owned `BookEntryFields` into the existing `BookDraft`, then delegates mandatory fields, whitespace normalization, duplicate inventory checks and persistence to `CatalogService::createBook()`. The existing SQLite transaction remains the single authority for atomic Work/Edition/Copy creation and uniqueness of inventory codes.
+
+`desktop_main.cpp` switches between catalog browsing and an inline book-create form by changing visibility of semantic SASD UI widgets. Save commits data before the form fields are cleared, then searches without a filter and selects the returned edition by ID; Cancel never calls the application layer. Failure retains all entered text, prevents a false success notification and preserves the existing catalog snapshot where possible. This design intentionally avoids a second validation rule set inside the UI.
+
+The first form has exactly one physical copy. It does **not** implement edits, deletion, a variable number of copies, zero-copy/digital items, ISBN checksum validation, or permissions. The normal catalog build stays toolkit-independent.
+
+`--smoke` starts the native desktop host, builds the initial table and renders one frame, then exits. Linux CI runs this under Xvfb; the new Windows CI job builds with MSVC and runs headless SQLite tests. Neither proves interactive mouse, keyboard, IME, accessiblity or visual appearance. A real desktop smoke checklist remains necessary.

@@ -1,5 +1,6 @@
 #include <harald/catalog.hpp>
 #include <harald/presentation/catalog_browser.hpp>
+#include <harald/presentation/book_entry.hpp>
 
 #if defined(_WIN32)
 #  include <sasd/ui/native/win32_backend.hpp>
@@ -27,6 +28,7 @@
 #include <sasd/ui/window.hpp>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cstdlib>
 #include <exception>
@@ -58,10 +60,11 @@ using DesktopConfig = native::gtk::GtkWindowBackendConfig;
  * follow the public SASD UI Toolkit 0.2 API. No SDL source or private toolkit
  * implementation headers are included here.
  */
-int run(const std::string& database_path) {
+int run(const std::string& database_path, bool smoke_test) {
     harald::SqliteCatalog repository{database_path};
     harald::CatalogService service{repository};
     harald::presentation::CatalogBrowser browser{service};
+    harald::presentation::BookEntryController entry{service};
 
     DesktopConfig config{};
     config.title = "HARALD - Catalog (experimental)";
@@ -82,6 +85,7 @@ int run(const std::string& database_path) {
     auto& search_label = window.emplace<Label>("Search:");
     auto& search = window.emplace<TextField>();
     auto& search_button = window.emplace<Button>("Search");
+    auto& new_book = window.emplace<Button>("New book");
     auto& list_label = window.emplace<Label>("Catalog (select a row to view copies)");
     auto& table = window.emplace<TableView>();
     auto& details_title = window.emplace<Label>("No book selected");
@@ -92,6 +96,42 @@ int run(const std::string& database_path) {
     auto& copy_line_2 = window.emplace<Label>("");
     auto& copy_line_3 = window.emplace<Label>("");
     auto& status = window.emplace<Label>("Ready");
+
+    /*
+     * Editor controls belong to HARALD, not the generic toolkit. We reuse
+     * normal semantic TextFields, Buttons and Labels; there are no SQL calls
+     * and no second, platform-specific widget hierarchy.
+     *
+     * The first book-entry use case intentionally creates ONE physical copy.
+     * A variable-length copy editor will be a separate, tested milestone.
+     */
+    auto& form_heading = window.emplace<Label>("New book with one physical copy");
+    auto& title_label = window.emplace<Label>("Title *");
+    auto& title_input = window.emplace<TextField>();
+    auto& creator_label = window.emplace<Label>("Author / creator *");
+    auto& creator_input = window.emplace<TextField>();
+    auto& edition_label = window.emplace<Label>("Edition *");
+    auto& edition_input = window.emplace<TextField>();
+    auto& isbn_label = window.emplace<Label>("ISBN (optional)");
+    auto& isbn_input = window.emplace<TextField>();
+    auto& inventory_label = window.emplace<Label>("Inventory code *");
+    auto& inventory_input = window.emplace<TextField>();
+    auto& location_label = window.emplace<Label>("Location *");
+    auto& location_input = window.emplace<TextField>();
+    auto& save_button = window.emplace<Button>("Save book");
+    auto& cancel_button = window.emplace<Button>("Cancel");
+
+    const std::array<Widget*, 13> browsing_controls{
+        &search_label, &search, &search_button, &new_book, &list_label, &table,
+        &details_title, &details_edition, &details_isbn, &details_copies,
+        &copy_line_1, &copy_line_2, &copy_line_3};
+    const std::array<Widget*, 15> editing_controls{
+        &form_heading, &title_label, &title_input, &creator_label, &creator_input,
+        &edition_label, &edition_input, &isbn_label, &isbn_input,
+        &inventory_label, &inventory_input, &location_label, &location_input,
+        &save_button, &cancel_button};
+    bool editing = false;
+    for (Widget* control : editing_controls) control->setVisible(false);
 
     table.setModel(&table_model);
     table.setSelectionModel(&selection);
@@ -109,7 +149,8 @@ int run(const std::string& database_path) {
         search_label.arrange({16, 60, 80, 30});
         search.arrange({98, 53, std::max<Coordinate>(0, w - 240), 36});
         search_button.arrange({std::max<Coordinate>(0, w - 126), 53, 110, 36});
-        list_label.arrange({16, 103, std::max<Coordinate>(0, w - 32), 26});
+        new_book.arrange({16, 99, 112, 32});
+        list_label.arrange({144, 103, std::max<Coordinate>(0, w - 160), 26});
         table.arrange({16, 137, std::max<Coordinate>(0, w - 32), table_height});
         const Coordinate detail_y = 153 + table_height;
         details_title.arrange({16, detail_y, std::max<Coordinate>(0, w - 32), 27});
@@ -119,6 +160,22 @@ int run(const std::string& database_path) {
         copy_line_1.arrange({25, detail_y + 104, std::max<Coordinate>(0, w - 50), 25});
         copy_line_2.arrange({25, detail_y + 129, std::max<Coordinate>(0, w - 50), 25});
         copy_line_3.arrange({25, detail_y + 154, std::max<Coordinate>(0, w - 50), 25});
+        // Hidden controls must still have valid geometry across resize/mode
+        // changes. This prototype uses fixed row spacing; a proper FormLayout
+        // and scrolling require a subsequent user-facing design iteration.
+        form_heading.arrange({16, 62, std::max<Coordinate>(0, w - 32), 30});
+        const std::array<Label*, 6> form_labels{&title_label, &creator_label,
+            &edition_label, &isbn_label, &inventory_label, &location_label};
+        const std::array<TextField*, 6> form_inputs{&title_input, &creator_input,
+            &edition_input, &isbn_input, &inventory_input, &location_input};
+        for (std::size_t i = 0; i < form_labels.size(); ++i) {
+            const Coordinate y = 111 + static_cast<Coordinate>(i) * 52;
+            form_labels[i]->arrange({16, y, 170, 32});
+            form_inputs[i]->arrange({195, y,
+                                    std::max<Coordinate>(0, w - 216), 34});
+        }
+        save_button.arrange({195, 444, 150, 39});
+        cancel_button.arrange({355, 444, 150, 39});
         status.arrange({16, std::max<Coordinate>(0, h - 32),
                         std::max<Coordinate>(0, w - 32), 26});
 
@@ -181,7 +238,7 @@ int run(const std::string& database_path) {
     });
     (void)subscription;
 
-    const auto refresh = [&] {
+    const auto refresh = [&]() -> bool {
         try {
             browser.refresh(std::string{search.text()});
             auto new_rows = browser.tableRows();
@@ -199,19 +256,82 @@ int run(const std::string& database_path) {
             updateDetails();
             status.setText(std::to_string(browser.projection().rowCount()) +
                            " edition(s) found; filter: " + std::string(browser.filter()));
+            return true;
         } catch (const std::exception& failure) {
             // Keep the previous result on a repository error. Never claim
             // success or silently switch a storage profile here.
             status.setText(std::string{"Catalog search failed: "} + failure.what());
+            return false;
         }
     };
-    search_button.setOnActivated(refresh);
-    refresh();
+    search_button.setOnActivated([&] { (void)refresh(); });
+    (void)refresh();
 
     FocusManager focus;
     PointerRouter pointer_router;
     (void)focus.requestFocus(search);
     arrange(backend.windowSize());
+
+    /**
+     * Switching the visible view is strictly a presentation operation.
+     * No transaction starts when the editor is opened or cancelled. Toolkit
+     * visibility clears hidden-widget focus, so we focus an eligible control.
+     */
+    const auto showEditor = [&](bool open) {
+        editing = open;
+        for (Widget* control : browsing_controls) control->setVisible(!open);
+        for (Widget* control : editing_controls) control->setVisible(open);
+        (void)focus.requestFocus(open ? static_cast<Widget&>(title_input)
+                                      : static_cast<Widget&>(search));
+        arrange(backend.windowSize());
+    };
+
+    new_book.setOnActivated([&] {
+        showEditor(true);
+        status.setText("Fields marked * are required. Save or Cancel.");
+    });
+    cancel_button.setOnActivated([&] {
+        showEditor(false);
+        status.setText("Book entry cancelled; no data was written.");
+    });
+
+    save_button.setOnActivated([&] {
+        try {
+            // Make owned UTF-8 copies before passing any values to the
+            // application layer. A rejected write leaves all fields intact.
+            const harald::presentation::BookEntryFields fields{
+                std::string{title_input.text()}, std::string{creator_input.text()},
+                std::string{edition_input.text()}, std::string{isbn_input.text()},
+                std::string{inventory_input.text()}, std::string{location_input.text()},
+            };
+            const harald::Id edition_id = entry.create(fields);
+
+            // Once COMMIT succeeded, clear the search filter so the new book
+            // will be visible even when the old query excluded its title.
+            search.setText("");
+            showEditor(false);
+            if (refresh()) {
+                if (const auto row = browser.projection().rowForEdition(edition_id)) {
+                    (void)selection.select(*row, 0);
+                }
+                status.setText("Book saved (edition " + std::to_string(edition_id) + ").");
+            } else {
+                status.setText("Book saved (edition " + std::to_string(edition_id) +
+                               "), but the catalog refresh failed.");
+            }
+
+            // Only reset after persistence. A storage error must NEVER erase
+            // a partially entered form or imply that the write succeeded.
+            title_input.setText("");
+            creator_input.setText("");
+            edition_input.setText("");
+            isbn_input.setText("");
+            inventory_input.setText("");
+            location_input.setText("");
+        } catch (const std::exception& problem) {
+            status.setText(std::string{"Book not saved: "} + problem.what());
+        }
+    });
 
     rendered::DisplayList frame;
     rendered::RenderedPresentationSink sink{frame, backend, Color::black};
@@ -225,6 +345,16 @@ int run(const std::string& database_path) {
         (void)backend.presentFrame(frame);
     };
     present();
+
+    if (smoke_test) {
+        /*
+         * Under Xvfb this verifies the actual GTK/native host initializes,
+         * queries SQLite and accepts a rendered frame. It does not establish
+         * interactive mouse, keyboard, IME or visual accessibility quality.
+         */
+        std::cout << "HARALD native desktop startup smoke passed\n";
+        return EXIT_SUCCESS;
+    }
 
     while (!application.exitRequested()) {
         application.processRoutedEvents(
@@ -270,7 +400,9 @@ int run(const std::string& database_path) {
                     }
                     if (!key->pressed) return;
                     if (key->key == Key::enter && focus.focusedWidget() == &search) {
-                        refresh();
+                        (void)refresh();
+                    } else if (key->key == Key::escape && editing) {
+                        showEditor(false);
                     } else if (key->key == Key::escape) {
                         application.requestExit();
                     }
@@ -289,11 +421,11 @@ int run(const std::string& database_path) {
 
 int main(int argc, char** argv) {
     try {
-        if (argc != 2) {
-            std::cerr << "Usage: harald_desktop PATH_TO_SQLITE_DB\n";
+        if (argc != 2 && !(argc == 3 && std::string{argv[2]} == "--smoke")) {
+            std::cerr << "Usage: harald_desktop PATH_TO_SQLITE_DB [--smoke]\n";
             return EXIT_FAILURE;
         }
-        return run(argv[1]);
+        return run(argv[1], argc == 3);
     } catch (const std::exception& failure) {
         std::cerr << "HARALD desktop error: " << failure.what() << '\n';
         return EXIT_FAILURE;

@@ -1,6 +1,6 @@
 # HARALD — First C++20 catalog implementation slice
 
-> **Status: experimental, not HARALD V1.0.** This directory contains real, tested source code for a small SQLite-backed catalog. It does **not** yet implement circulation, media profiles, configurable JSON backends, acquisitions, export/backup, security, or a finished graphical desktop application. An **experimental optional native Windows/GTK4 catalog window** now exists alongside the headless TableView preview; it is not the finished screen shown in the repository README.
+> **Status: experimental, not HARALD V1.0.** This directory contains real, tested source code for a small SQLite-backed catalog. It does **not** yet implement circulation, media profiles, configurable JSON backends, acquisitions, export/backup, security, or a finished graphical desktop application. An **experimental optional native Windows/GTK4 catalog window with first book-entry form** now exists alongside the headless TableView preview; it is not the finished screen shown in the repository README.
 
 This is the **M2/M3 exploratory vertical slice**. The main project remains in planning; an accepted stack ADR and a complete supported-OS matrix are still pending.
 
@@ -40,7 +40,7 @@ The `add-book` demonstration is intentionally limited to **exactly two copies**.
 
 This small **opt-in** target integrates `StringTableModel`, `TableSelectionModel` and `TableView` with real HARALD catalog data. It prints visible table rows, selects the first result and displays its physical copies through `CatalogService::details()`; it **does not** create a graphical window. It is deliberately kept separate until the desired desktop host and toolkit version are validated.
 
-A separately installed SASD UI Toolkit CMake package version 0.2 or later is required; this optional target has **not** been built in the current execution environment, because that package is not installed there.
+A separately installed SASD UI Toolkit CMake package version 0.2 is required. The **pinned package consumer is exercised in GitHub Actions on Linux**; this does not imply manual visual testing.
 
 ```sh
 cmake -S implementations/cpp -B implementations/cpp/build-ui \
@@ -53,12 +53,12 @@ cmake --build implementations/cpp/build-ui --parallel
 
 ### Optional native desktop catalog window (experimental, 28 October 2026)
 
-`harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection and a read-only detail pane. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search prototype**, not a full create/edit UI. Detail output shows at most three copy lines; no scrolling/pagination or accessibility acceptance is claimed.
+`harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection, read-only detail pane and a first single-copy book-entry form. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search/create prototype**, not a full create/edit/delete UI. Detail output shows at most three copy lines; no scrolling/pagination or accessibility acceptance is claimed.
 
-On **Windows**, install a compatible SASD UI Toolkit 0.2 CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Then use a CMake generator matching the toolkit installation:
+On **Windows**, install a compatible SASD UI Toolkit 0.2 **Debug** CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Use the same x64 MSVC toolchain/triplet and configure **Debug only**: the 0.2 export does not provide a Release library when it was installed from a Debug-only build. Do not mix Debug and Release MSVC runtimes. Then run:
 
 ```powershell
-cmake -S implementations/cpp -B build-harald-desktop -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
+cmake -S implementations/cpp -B build-harald-desktop -A x64 -DCMAKE_CONFIGURATION_TYPES=Debug -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
 cmake --build build-harald-desktop --config Debug
 ctest --test-dir build-harald-desktop -C Debug --output-on-failure
 .\build-harald-desktop\Debug\harald_cli.exe --db "$env:TEMP\harald-demo.sqlite" seed
@@ -122,11 +122,11 @@ A SQLite file in this prototype is not a general cross-language interchange cont
 - IDs are SQLite-generated integers in this proof-of-concept; stable cross-backend IDs and migration policy remain an ADR decision.
 - No portable backup/restore or JSON migration exists; this prototype is **not suitable for irreplaceable library data**.
 - Concurrency and schema upgrades beyond v1 still need design and testing.
-- The console preview remains headless. The new native window is experimental, needs a desktop smoke test, and has no book editing, accessible keyboard grid acceptance or detailed copy scrolling yet.
+- The console preview remains headless. The native window adds a first book-create panel (one copy per book), but no edit/delete, variable-copy form, accepted accessibility/IME behavior or detailed copy scrolling yet.
 
 ## Next increment
 
-Manually smoke-test the experimental native host on Windows and Linux, validate keyboard focus/text input and pointer selection, then add an independently testable new-book form through `CatalogService::createBook()` (no SQL in widgets). Expand Windows CI, Unicode coverage and domain error categories. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
+Manually smoke-test search, book creation, keyboard focus/text input and pointer selection on real Windows/Linux desktops. Then improve layout/resizing and add a variable-length physical-copy editor and domain error categories. Automated Windows compile/CTest and Linux Xvfb startup checks are configured in GitHub Actions, but they cannot replace manual accessibility/IME tests. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
 
 ### Catalog selection bridge (experimental, 28 October 2026)
 
@@ -137,3 +137,19 @@ The headless `harald_catalog_table_projection_tests` is enabled by the default C
 ### Native catalog browser coordinator (experimental, 28 October 2026)
 
 `CatalogBrowser` retains an owned `CatalogTableProjection`, applied filter, selected **Edition ID** and optional owned `BookDetails`. Selecting a table row is translated into the stable edition ID before querying the service. After search the selected ID survives **reorder** but not filtering/removal. Repository exceptions leave the prior visible snapshot intact. `StringTableModel::reset()` invalidates toolkit positional selection; the desktop adapter deliberately suppresses transient deselection notifications and then reselects by the preserved ID. These behaviors are covered by a new default-build CTest. Neither `HARALD::Catalog` nor `HARALD::CatalogPresentation` depends on SASD UI.
+
+
+### New book form and native smoke test (experimental, 28 October 2026)
+
+Click **New book** and enter title, author/creator, edition, optional ISBN, inventory code and physical location. A successful **Save book** calls the same `CatalogService::createBook()` used by the CLI, commits Work/Edition/Copy atomically, returns to the catalog, clears the search filter and attempts to select the new edition by typed ID. **Cancel** makes no database changes. On a validation/storage error, the editor remains open with its entered text intact. The form is deliberately limited to **one physical copy**; additional copies and zero-copy/digital-only editions require separate business requirements.
+
+Automated `harald_book_entry_tests` invokes the real SQLite adapter, including persistence after reopen and rollback on a duplicate inventory code. Linux CI also uses `xvfb-run` to start GTK4 and render an initial frame. This checks only native startup and renderer integration, **not interactive behavior**.
+
+Use a disposable test database for smoke tests:
+
+```sh
+./build-harald-desktop/harald_cli --db /tmp/harald-smoke.sqlite seed
+xvfb-run -a ./build-harald-desktop/harald_desktop /tmp/harald-smoke.sqlite --smoke
+```
+
+Windows CI compiles the native Win32 target against a pinned installed Toolkit 0.2 package, with SQLite supplied through vcpkg, and executes the same four headless CTests. Successful CI does not imply that a person has verified the visual UI. **MSVC and Windows CI results should be checked for each commit before a merge.**

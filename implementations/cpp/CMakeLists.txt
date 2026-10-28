@@ -4,10 +4,19 @@ project(HARALD VERSION 0.0.1 LANGUAGES CXX)
 include(CTest)
 find_package(SQLite3 REQUIRED)
 
+# CMake's FindSQLite3 target was renamed in newer toolchain releases.
+# Prefer the current canonical target but retain CMake 3.20 compatibility on
+# older Linux/BSD distributions. This also avoids vcpkg's deprecation notice.
+if(TARGET SQLite3::SQLite3)
+    set(_harald_sqlite_target SQLite3::SQLite3)
+else()
+    set(_harald_sqlite_target SQLite::SQLite3)
+endif()
+
 add_library(harald_catalog STATIC src/catalog.cpp src/sqlite_catalog.cpp)
 add_library(HARALD::Catalog ALIAS harald_catalog)
 target_include_directories(harald_catalog PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(harald_catalog PUBLIC SQLite::SQLite3)
+target_link_libraries(harald_catalog PUBLIC ${_harald_sqlite_target})
 target_compile_features(harald_catalog PUBLIC cxx_std_20)
 
 if(MSVC)
@@ -18,7 +27,7 @@ endif()
 
 # Presentation projection deliberately does not import SASD UI or SQLite headers.
 # It can be built and tested even when a desktop backend is unavailable.
-add_library(harald_catalog_presentation STATIC src/catalog_table_projection.cpp src/catalog_browser.cpp)
+add_library(harald_catalog_presentation STATIC src/catalog_table_projection.cpp src/catalog_browser.cpp src/book_entry.cpp)
 add_library(HARALD::CatalogPresentation ALIAS harald_catalog_presentation)
 target_include_directories(harald_catalog_presentation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(harald_catalog_presentation PUBLIC HARALD::Catalog)
@@ -53,6 +62,15 @@ if(BUILD_TESTING)
         target_compile_options(harald_catalog_browser_tests PRIVATE /utf-8)
     endif()
     add_test(NAME harald_catalog_browser_tests COMMAND harald_catalog_browser_tests)
+
+    # Real SQLite round-trip including invalid input and transaction rollback
+    # through the presentation-facing entry controller, independent of widgets.
+    add_executable(harald_book_entry_tests tests/book_entry_tests.cpp)
+    target_link_libraries(harald_book_entry_tests PRIVATE HARALD::CatalogPresentation)
+    if(MSVC)
+        target_compile_options(harald_book_entry_tests PRIVATE /utf-8)
+    endif()
+    add_test(NAME harald_book_entry_tests COMMAND harald_book_entry_tests)
 endif()
 
 # Optional integration with the separately versioned SASD UI Toolkit. This
