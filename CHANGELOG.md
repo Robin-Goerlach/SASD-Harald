@@ -6,7 +6,12 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 > **Status:** Planning/pre-alpha. HARALD has **no published application release**, no production feature set, and no promised release date. Do not invent a version or change entry implying otherwise.
 
-## [Unreleased]\n\n### Added — catalog presentation selection bridge (2026-10-28)\n- New toolkit-neutral `HARALD::CatalogPresentation` C++ target; owned book-table projection stores edition identities separately from display rows and rejects invalid/duplicate identities.\n- Standalone CTest coverage for Unicode rows, stale selection, reorder/filter identity preservation and independent display-string ownership.\n- Optional console UI preview uses TableSelectionModel to request copy details through the application service by typed edition ID. **No graphical host is claimed.**
+## [Unreleased]
+
+### Added — catalog presentation selection bridge (2026-10-28)
+- New toolkit-neutral `HARALD::CatalogPresentation` C++ target; owned book-table projection stores edition identities separately from display rows and rejects invalid/duplicate identities.
+- Standalone CTest coverage for Unicode rows, stale selection, reorder/filter identity preservation and independent display-string ownership.
+- Optional console UI preview uses TableSelectionModel to request copy details through the application service by typed edition ID. **No graphical host is claimed.**
 
 ### Added — experimental catalog slice (2026-10-26)
 - First **C++20 Work → Edition → Physical Copy** implementation under `implementations/cpp/`.
