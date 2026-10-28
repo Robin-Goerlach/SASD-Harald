@@ -8,6 +8,11 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Added — catalog presentation selection bridge (2026-10-28)
+- New toolkit-neutral `HARALD::CatalogPresentation` C++ target; owned book-table projection stores edition identities separately from display rows and rejects invalid/duplicate identities.
+- Standalone CTest coverage for Unicode rows, stale selection, reorder/filter identity preservation and independent display-string ownership.
+- Optional console UI preview uses TableSelectionModel to request copy details through the application service by typed edition ID. Linux CI also builds the installed UI Toolkit 0.2 consumer; **no graphical host is claimed.**
+
 ### Added — experimental catalog slice (2026-10-26)
 - First **C++20 Work → Edition → Physical Copy** implementation under `implementations/cpp/`.
 - Framework-independent `CatalogService` and `CatalogRepository` port; SQLite schema v1 with foreign keys and unique inventory barcodes.
@@ -34,7 +39,7 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 - Identified stack/platform selection, accepted ADRs, source implementation, test automation and runnable installation as **future tasks**.
 
 ### Not yet available
-- Catalog, inventory, lending, accounts, protected asset management, UI, import/export and API are **not yet implemented**.
+- Full cataloging workflows, lending, accounts, protected asset management, graphical UI, import/export and API are **not yet implemented**. The working experimental catalog CLI and headless table preview do not constitute a completed product.
 - No installable binaries, containers, tagged releases or verified runtime commands exist.
 
 <!-- For future real releases:

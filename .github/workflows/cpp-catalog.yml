@@ -29,3 +29,36 @@ jobs:
         run: cmake --build build-harald --parallel 2
       - name: Test
         run: ctest --test-dir build-harald --output-on-failure
+
+  toolkit-consumer:
+    name: Linux / installed SASD UI Toolkit 0.2 / headless preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Pin the actual UI Toolkit API snapshot that was reviewed for this
+      # experimental consumer. A future compatibility update must be tested
+      # explicitly rather than silently adopting breaking changes on main.
+      - uses: actions/checkout@v4
+        with:
+          repository: Robin-Goerlach/SASD-UI-Toolkit
+          ref: 2dd0b6fa8017562a418c9b7f29c866476f2affe5
+          path: .ci/sasd-ui-toolkit
+          persist-credentials: false
+      - name: Install SQLite development headers
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev
+      - name: Build installable toolkit package
+        run: |
+          cmake -S .ci/sasd-ui-toolkit -B build-sasd-ui -DCMAKE_BUILD_TYPE=Debug -DSASD_UI_BUILD_TESTS=OFF -DSASD_UI_BUILD_EXAMPLES=OFF
+          cmake --build build-sasd-ui --parallel 2
+          cmake --install build-sasd-ui --prefix "$RUNNER_TEMP/sasd-ui-prefix"
+      - name: Build HARALD with installed SASD UI Toolkit package
+        run: |
+          cmake -S implementations/cpp -B build-harald-ui -DCMAKE_BUILD_TYPE=Debug -DHARALD_WITH_SASD_UI=ON -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/sasd-ui-prefix"
+          cmake --build build-harald-ui --parallel 2
+          ctest --test-dir build-harald-ui --output-on-failure
+      - name: Exercise Toolkit table selection and catalog details lookup
+        run: |
+          ./build-harald-ui/harald_cli --db "$RUNNER_TEMP/harald-ci.sqlite" seed
+          ./build-harald-ui/harald_ui_preview "$RUNNER_TEMP/harald-ci.sqlite" | tee "$RUNNER_TEMP/harald-preview.log"
+          grep -q "Selected edition 1:" "$RUNNER_TEMP/harald-preview.log"
+          grep -q "HAR-0001" "$RUNNER_TEMP/harald-preview.log"

@@ -1,7 +1,7 @@
 # HARALD — Test Strategy and Acceptance Evidence
 
 > Document: HARALD-TEST-001  
-> Status: Proposed quality plan, 2026-10-17. **The first real SQLite integration-test executable and Linux CI workflow definition exist as of 2026-10-26.** The local tests passed, but GitHub CI execution is unverified. The full release test suite remains planned.  
+> Status: Proposed quality plan, 2026-10-17. **The first real SQLite integration-test executable and Linux CI workflow definition exist as of 2026-10-26.** The original local tests passed. On 2026-10-28, GitHub Actions also verified Linux GCC/Clang Debug/Release CTest and an installed SASD UI Toolkit 0.2 headless consumer. Non-Linux and graphical tests remain unverified. The full release test suite remains planned.  
 > Related: [Roadmap](../../ROADMAP.md), [Requirements](../requirements/README.md), [Architecture](../architecture/ARCHITECTURE.md), [Agent instructions](../../AGENTS.md).
 
 ## 1. Purpose
@@ -12,7 +12,7 @@ Test requirements should be mapped to the stable IDs in the original functional 
 
 ## Current execution evidence (2026-10-26)
 
-[The initial C++/SQLite test](../../implementations/cpp/tests/catalog_tests.cpp) exercises actual database persistence rather than mocks: one Work/Edition/two distinct copies, reopen, literal-search metacharacters, blank/duplicate validation, and atomic rollback on duplicate inventory codes. CTest passed locally with GCC Debug/Release and Clang Debug. Circulation concurrency, JSON, export/restore, security, graphical UI and non-Linux builds remain **untested and/or unimplemented**.
+[The initial C++/SQLite test](../../implementations/cpp/tests/catalog_tests.cpp) exercises actual database persistence rather than mocks: one Work/Edition/two distinct copies, reopen, literal-search metacharacters, blank/duplicate validation, and atomic rollback on duplicate inventory codes. CTest passed locally with GCC Debug/Release and Clang Debug. GitHub Actions additionally verified a Linux compiler/build-type matrix and the projection/selection preview. Circulation concurrency, JSON, export/restore, security, graphical UI and non-Linux builds remain **untested and/or unimplemented**.
 
 ## 2. Principles
 
