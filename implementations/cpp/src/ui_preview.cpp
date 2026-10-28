@@ -1,5 +1,5 @@
 #include <harald/catalog.hpp>
-#include <harald/presentation/catalog_table_projection.hpp>
+#include <harald/presentation/catalog_browser.hpp>
 
 #include <sasd/ui/table_model.hpp>
 #include <sasd/ui/table_selection_model.hpp>
@@ -15,7 +15,7 @@
 /**
  * Optional, headless SASD UI Toolkit integration.
  *
- * CatalogTableProjection owns the application-layer search snapshot and keeps
+ * CatalogBrowser owns the application-layer search snapshot and keeps
  * typed edition IDs independent of positional TableView rows. StringTableModel
  * takes a separate owned copy of the display cells. Selection and TableView
  * borrow the model but are destroyed first (reverse declaration order).
@@ -33,11 +33,11 @@ int main(int argc, char** argv) {
 
         harald::SqliteCatalog repository(argv[1]);
         harald::CatalogService catalog(repository);
-        const harald::presentation::CatalogTableProjection projection{
-            catalog.search(argc >= 3 ? argv[2] : "")};
+        harald::presentation::CatalogBrowser browser{catalog};
+        browser.refresh(argc >= 3 ? argv[2] : "");
 
         sasd::ui::StringTableModel model(
-            {"ID", "Title", "Creator", "Edition", "Copies"}, projection.tableRows());
+            {"ID", "Title", "Creator", "Edition", "Copies"}, browser.tableRows());
         sasd::ui::TableSelectionModel selection;
         selection.setModel(&model);
         sasd::ui::TableView view;
@@ -51,19 +51,19 @@ int main(int argc, char** argv) {
                       << row.cells.at(4) << " copies\n";
         }
 
-        if (projection.rowCount() != 0) {
+        if (browser.projection().rowCount() != 0) {
             if (!selection.select(0, 0)) {
                 throw std::runtime_error("Cannot select the first catalog row");
             }
             const auto selected_cell = selection.selectedCell();
             // Selected positions are ephemeral; only the projection's typed ID
             // is allowed to cross into a domain details lookup.
-            const auto edition_id = selected_cell
-                ? projection.editionIdAt(selected_cell->row) : std::nullopt;
+            const bool available = selected_cell && browser.selectRow(selected_cell->row);
+            const auto edition_id = available ? browser.selectedEditionId() : std::nullopt;
             if (!edition_id) {
                 throw std::runtime_error("Selected catalog row is no longer available");
             }
-            const auto details = catalog.details(*edition_id);
+            const auto& details = browser.selectedDetails();
             if (!details) {
                 throw std::runtime_error("Selected edition was removed from the catalog");
             }
