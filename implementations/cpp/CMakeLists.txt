@@ -40,6 +40,11 @@ if(BUILD_TESTING)
 
     add_executable(harald_catalog_table_projection_tests tests/catalog_table_projection_tests.cpp)
     target_link_libraries(harald_catalog_table_projection_tests PRIVATE HARALD::CatalogPresentation)
+    # MSVC otherwise uses the machine's legacy code page for source literals
+    # without a BOM. Our German/Japanese fixtures must be decoded as UTF-8.
+    if(MSVC)
+        target_compile_options(harald_catalog_table_projection_tests PRIVATE /utf-8)
+    endif()
     add_test(NAME harald_catalog_table_projection_tests COMMAND harald_catalog_table_projection_tests)
 endif()
 
