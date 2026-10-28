@@ -103,7 +103,7 @@ jobs:
       - name: Build and install SASD UI Toolkit native Win32 package
         shell: pwsh
         run: |
-          cmake -S .ci/sasd-ui-toolkit -B build-sasd-ui-win -A x64 "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DSASD_UI_BUILD_TESTS=OFF -DSASD_UI_BUILD_EXAMPLES=OFF
+          cmake -S .ci/sasd-ui-toolkit -B build-sasd-ui-win -A x64 -DCMAKE_CONFIGURATION_TYPES=Debug "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DSASD_UI_BUILD_TESTS=OFF -DSASD_UI_BUILD_EXAMPLES=OFF
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build build-sasd-ui-win --config Debug --parallel 2
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
@@ -113,7 +113,7 @@ jobs:
       - name: Compile HARALD native desktop with MSVC
         shell: pwsh
         run: |
-          cmake -S implementations/cpp -B build-harald-win -A x64 "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" "-DCMAKE_PREFIX_PATH=$env:RUNNER_TEMP/sasd-ui-prefix" -DHARALD_WITH_DESKTOP=ON
+          cmake -S implementations/cpp -B build-harald-win -A x64 -DCMAKE_CONFIGURATION_TYPES=Debug "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" "-DCMAKE_PREFIX_PATH=$env:RUNNER_TEMP/sasd-ui-prefix" -DHARALD_WITH_DESKTOP=ON
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build build-harald-win --config Debug --parallel 2
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
