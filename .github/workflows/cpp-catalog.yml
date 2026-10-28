@@ -45,7 +45,7 @@ jobs:
           path: .ci/sasd-ui-toolkit
           persist-credentials: false
       - name: Install SQLite development headers
-        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev libgtk-4-dev pkg-config
+        run: sudo apt-get update && sudo apt-get install -y libsqlite3-dev libgtk-4-dev pkg-config xvfb xauth
       - name: Build installable toolkit package
         run: |
           cmake -S .ci/sasd-ui-toolkit -B build-sasd-ui -DCMAKE_BUILD_TYPE=Debug -DSASD_UI_BUILD_TESTS=OFF -DSASD_UI_BUILD_EXAMPLES=OFF
@@ -74,3 +74,52 @@ jobs:
             -DHARALD_SASD_UI_SOURCE_DIR="$GITHUB_WORKSPACE/.ci/sasd-ui-toolkit"
           cmake --build build-harald-desktop --parallel 2
           ctest --test-dir build-harald-desktop --output-on-failure
+
+      - name: Start GTK4 catalog with virtual display
+        run: |
+          # This checks real native startup, not manual interaction quality.
+          ./build-harald-desktop/harald_cli --db "$RUNNER_TEMP/harald-gui-smoke.sqlite" seed
+          timeout 30s xvfb-run -a -s "-screen 0 1280x800x24" ./build-harald-desktop/harald_desktop "$RUNNER_TEMP/harald-gui-smoke.sqlite" --smoke
+
+  windows-msvc:
+    name: Windows / MSVC / Debug / Win32 desktop
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Robin-Goerlach/SASD-UI-Toolkit
+          ref: 2dd0b6fa8017562a418c9b7f29c866476f2affe5
+          path: .ci/sasd-ui-toolkit
+          persist-credentials: false
+
+      - name: Install SQLite development library with vcpkg
+        shell: pwsh
+        run: |
+          if (-not $env:VCPKG_INSTALLATION_ROOT) { throw "Runner has no VCPKG_INSTALLATION_ROOT" }
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install sqlite3:x64-windows
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Build and install SASD UI Toolkit native Win32 package
+        shell: pwsh
+        run: |
+          cmake -S .ci/sasd-ui-toolkit -B build-sasd-ui-win -A x64 "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" -DSASD_UI_BUILD_TESTS=OFF -DSASD_UI_BUILD_EXAMPLES=OFF
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build-sasd-ui-win --config Debug --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --install build-sasd-ui-win --config Debug --prefix "$env:RUNNER_TEMP/sasd-ui-prefix"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Compile HARALD native desktop with MSVC
+        shell: pwsh
+        run: |
+          cmake -S implementations/cpp -B build-harald-win -A x64 "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" "-DCMAKE_PREFIX_PATH=$env:RUNNER_TEMP/sasd-ui-prefix" -DHARALD_WITH_DESKTOP=ON
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build-harald-win --config Debug --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Test HARALD with SQLite on Windows
+        shell: pwsh
+        run: |
+          ctest --test-dir build-harald-win -C Debug --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
