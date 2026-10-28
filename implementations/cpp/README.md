@@ -55,10 +55,10 @@ cmake --build implementations/cpp/build-ui --parallel
 
 `harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection, read-only detail pane and a first single-copy book-entry form. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search/create prototype**, not a full create/edit/delete UI. Detail output shows at most three copy lines; no scrolling/pagination or accessibility acceptance is claimed.
 
-On **Windows**, install a compatible SASD UI Toolkit 0.2 CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Then use a CMake generator matching the toolkit installation:
+On **Windows**, install a compatible SASD UI Toolkit 0.2 **Debug** CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Use the same x64 MSVC toolchain/triplet and configure **Debug only**: the 0.2 export does not provide a Release library when it was installed from a Debug-only build. Do not mix Debug and Release MSVC runtimes. Then run:
 
 ```powershell
-cmake -S implementations/cpp -B build-harald-desktop -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
+cmake -S implementations/cpp -B build-harald-desktop -A x64 -DCMAKE_CONFIGURATION_TYPES=Debug -DHARALD_WITH_DESKTOP=ON -DCMAKE_PREFIX_PATH="C:/path/to/sasd-ui-install"
 cmake --build build-harald-desktop --config Debug
 ctest --test-dir build-harald-desktop -C Debug --output-on-failure
 .\build-harald-desktop\Debug\harald_cli.exe --db "$env:TEMP\harald-demo.sqlite" seed
