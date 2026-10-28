@@ -1,4 +1,5 @@
 #include <harald/catalog.hpp>
+#include <harald/presentation/catalog_table_projection.hpp>
 
 #include <sasd/ui/table_model.hpp>
 #include <sasd/ui/table_selection_model.hpp>
@@ -7,18 +8,20 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
-#include <vector>
 
 /**
- * Optional SASD UI Toolkit integration: a real TableModel and virtualized
- * TableView consume HARALD application data without knowing SQLite or the
- * persistence adapter. The preview prints visible rows to stdout for now;
- * it is NOT yet a native graphical desktop window.
+ * Optional, headless SASD UI Toolkit integration.
  *
- * The corresponding desktop host will be a separate presentation adapter;
- * starting with an independently testable model allows its backend (Win32,
- * SDL3, GTK, ...) to change without changing catalogue use cases.
+ * CatalogTableProjection owns the application-layer search snapshot and keeps
+ * typed edition IDs independent of positional TableView rows. StringTableModel
+ * takes a separate owned copy of the display cells. Selection and TableView
+ * borrow the model but are destroyed first (reverse declaration order).
+ *
+ * The first row is selected programmatically to demonstrate a selection-driven
+ * details query through CatalogService. No SQL, SQLite handle or database key
+ * parsing occurs in a widget. This is NOT a graphical desktop host.
  */
 int main(int argc, char** argv) {
     try {
@@ -26,27 +29,50 @@ int main(int argc, char** argv) {
             std::cerr << "Usage: harald_ui_preview PATH_TO_SQLITE_DB [FILTER]\n";
             return EXIT_FAILURE;
         }
+
         harald::SqliteCatalog repository(argv[1]);
         harald::CatalogService catalog(repository);
-        const auto books = catalog.search(argc >= 3 ? argv[2] : "");
-        std::vector<std::vector<std::string>> rows;
-        rows.reserve(books.size());
-        for (const auto& book : books) {
-            rows.push_back({std::to_string(book.edition_id), book.title, book.creator,
-                            book.edition_label, std::to_string(book.copy_count)});
-        }
-        sasd::ui::StringTableModel model({"ID", "Title", "Creator", "Edition", "Copies"},
-                                          std::move(rows));
+        const harald::presentation::CatalogTableProjection projection{
+            catalog.search(argc >= 3 ? argv[2] : "")};
+
+        sasd::ui::StringTableModel model(
+            {"ID", "Title", "Creator", "Edition", "Copies"}, projection.tableRows());
         sasd::ui::TableSelectionModel selection;
         selection.setModel(&model);
         sasd::ui::TableView view;
         view.setModel(&model);
         view.setSelectionModel(&selection);
         view.setViewport(0, 20, 0, 5);
-        for (auto const& row : view.visibleRows()) {
+
+        for (const auto& row : view.visibleRows()) {
             std::cout << row.cells.at(0) << " | " << row.cells.at(1) << " | "
                       << row.cells.at(2) << " | " << row.cells.at(3) << " | "
                       << row.cells.at(4) << " copies\n";
+        }
+
+        if (projection.rowCount() != 0) {
+            if (!selection.select(0, 0)) {
+                throw std::runtime_error("Cannot select the first catalog row");
+            }
+            const auto selected_cell = selection.selectedCell();
+            // Selected positions are ephemeral; only the projection's typed ID
+            // is allowed to cross into a domain details lookup.
+            const auto edition_id = selected_cell
+                ? projection.editionIdAt(selected_cell->row) : std::nullopt;
+            if (!edition_id) {
+                throw std::runtime_error("Selected catalog row is no longer available");
+            }
+            const auto details = catalog.details(*edition_id);
+            if (!details) {
+                throw std::runtime_error("Selected edition was removed from the catalog");
+            }
+
+            std::cout << "Selected edition " << *edition_id << ": "
+                      << details->book.title << '\n';
+            for (const auto& copy : details->copies) {
+                std::cout << "  Copy " << copy.id << " | " << copy.inventory_code
+                          << " | " << copy.location << '\n';
+            }
         }
         return EXIT_SUCCESS;
     } catch (const std::exception& e) {

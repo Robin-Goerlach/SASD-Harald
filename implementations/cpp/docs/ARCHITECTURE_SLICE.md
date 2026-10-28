@@ -71,3 +71,9 @@ The UI Toolkit remains a **versioned, optional dependency**; HARALD core builds 
 5. Introduce concurrency-safe circulation as a separate bounded context (not by adding a nullable `borrower` field to `copies`).
 6. Add safe backup/restore **before real collections are migrated**.
 7. Expand CI to actual Windows/macOS targets only after prerequisites and results are verified.
+
+## Selection identity bridge (2026-10-28, experimental)
+
+`HARALD::CatalogPresentation` contains `CatalogTableProjection`, an owned presentation-layer snapshot. It depends on the existing application DTO `BookSummary`, **not** SQLite or `sasd::ui`. Its five display cells are transient values, while each row's edition identity remains an `Id` in the snapshot. UI adapters should obtain an ID using `editionIdAt()` before calling `CatalogService::details()`; on refresh, keep the ID rather than the old table position and use `rowForEdition()` to reselect it. Stale rows, non-positive IDs and duplicate IDs fail closed.
+
+The optional UI preview now programmatically selects the first cell and requests copy details through `CatalogService`. This is a testable intermediate binding, **not a user-interactive desktop window**. The UI Toolkit 0.2 package and a concrete native/SDL host are deliberately not bundled with HARALD.

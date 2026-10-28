@@ -38,7 +38,7 @@ The `add-book` demonstration is intentionally limited to **exactly two copies**.
 
 ### Optional SASD UI Toolkit model/view preview
 
-This small **opt-in** target integrates `StringTableModel`, `TableSelectionModel` and `TableView` with real HARALD catalog data. It prints visible table rows on stdout; it **does not** create a graphical window. It is deliberately kept separate until the desired desktop host and toolkit version are validated.
+This small **opt-in** target integrates `StringTableModel`, `TableSelectionModel` and `TableView` with real HARALD catalog data. It prints visible table rows, selects the first result and displays its physical copies through `CatalogService::details()`; it **does not** create a graphical window. It is deliberately kept separate until the desired desktop host and toolkit version are validated.
 
 A separately installed SASD UI Toolkit CMake package version 0.2 or later is required; this optional target has **not** been built in the current execution environment, because that package is not installed there.
 
@@ -77,7 +77,7 @@ CLI (now) / SASD UI Adapter (optional) / future REST/UI clients
 - [`src/catalog.cpp`](src/catalog.cpp): independent validation and application use cases.
 - [`src/sqlite_catalog.cpp`](src/sqlite_catalog.cpp): concrete SQLite access, migration and transactions.
 - [`src/main.cpp`](src/main.cpp): minimal command-line host.
-- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit table-model consumer.
+- [`src/catalog_table_projection.cpp`](src/catalog_table_projection.cpp): toolkit-independent, owned table/edition-ID projection with negative and Unicode tests.\n- [`src/ui_preview.cpp`](src/ui_preview.cpp): optional SASD UI Toolkit table-model consumer, now with selection-driven details lookup.
 - [`tests/catalog_tests.cpp`](tests/catalog_tests.cpp): integration tests using real SQLite.
 - [`docs/ARCHITECTURE_SLICE.md`](docs/ARCHITECTURE_SLICE.md): implementation boundaries, deliberate limitations and next increment.
 
@@ -98,3 +98,9 @@ A SQLite file in this prototype is not a general cross-language interchange cont
 ## Next increment
 
 Implement a genuine desktop host on a tested SASD UI Toolkit package. Reuse the same `CatalogService` and add a search box, `TableView`, selection-driven detail display and a new-book dialog without putting SQL calls in any widget. Expand automated tests to include UI model adapter behavior, Windows build verification, Unicode and domain error categories. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
+
+### Catalog selection bridge (experimental, 28 October 2026)
+
+`HARALD::CatalogPresentation` adds `CatalogTableProjection`: an owned, five-column snapshot of `CatalogService::search()` results, independent of SQLite and SASD UI. The projection validates that edition IDs are positive and unique; `editionIdAt(row)` converts a selected table row into an authoritative application ID, and `rowForEdition(id)` can restore selection after filtering/reordering. A stale row returns no ID, not an unrelated record. This does **not** create globally portable IDs; that requires a separate design/migration step.
+
+The headless `harald_catalog_table_projection_tests` is enabled by the default CTest configuration and exercises Unicode, selection after reorder/filter, owned snapshot values, invalid/duplicate IDs, and stale rows. The optional `harald_ui_preview` is still **not verified** against an installed UI Toolkit in this development environment, and remains a console demo. A real SDL/native desktop host and interactive search remain future work.

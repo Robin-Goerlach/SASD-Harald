@@ -16,6 +16,20 @@ else()
     target_compile_options(harald_catalog PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
+# Presentation projection deliberately does not import SASD UI or SQLite headers.
+# It can be built and tested even when a desktop backend is unavailable.
+add_library(harald_catalog_presentation STATIC src/catalog_table_projection.cpp)
+add_library(HARALD::CatalogPresentation ALIAS harald_catalog_presentation)
+target_include_directories(harald_catalog_presentation PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_link_libraries(harald_catalog_presentation PUBLIC HARALD::Catalog)
+target_compile_features(harald_catalog_presentation PUBLIC cxx_std_20)
+
+if(MSVC)
+    target_compile_options(harald_catalog_presentation PRIVATE /W4 /permissive-)
+else()
+    target_compile_options(harald_catalog_presentation PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
 add_executable(harald_cli src/main.cpp)
 target_link_libraries(harald_cli PRIVATE HARALD::Catalog)
 
@@ -23,6 +37,10 @@ if(BUILD_TESTING)
     add_executable(harald_catalog_tests tests/catalog_tests.cpp)
     target_link_libraries(harald_catalog_tests PRIVATE HARALD::Catalog)
     add_test(NAME harald_catalog_tests COMMAND harald_catalog_tests)
+
+    add_executable(harald_catalog_table_projection_tests tests/catalog_table_projection_tests.cpp)
+    target_link_libraries(harald_catalog_table_projection_tests PRIVATE HARALD::CatalogPresentation)
+    add_test(NAME harald_catalog_table_projection_tests COMMAND harald_catalog_table_projection_tests)
 endif()
 
 # Optional integration with the separately versioned SASD UI Toolkit. This
@@ -32,5 +50,5 @@ option(HARALD_WITH_SASD_UI "Build optional SASD UI Toolkit model/view preview" O
 if(HARALD_WITH_SASD_UI)
     find_package(SASDUIToolkit 0.2 CONFIG REQUIRED)
     add_executable(harald_ui_preview src/ui_preview.cpp)
-    target_link_libraries(harald_ui_preview PRIVATE HARALD::Catalog SASD::UI)
+    target_link_libraries(harald_ui_preview PRIVATE HARALD::CatalogPresentation SASD::UI)
 endif()
