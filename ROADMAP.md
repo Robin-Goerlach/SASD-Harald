@@ -65,8 +65,8 @@ The architecture proposes a **modular monolith**, a small/self-hosted operating 
 | Functional requirements | Drafted; review/approval outstanding | docs/requirements |
 | Stack and supported-platform decision | Open | Accepted ADR + proof-of-concept builds |
 | Source tree/build system | Experimental C++20/CMake catalog implemented | Verify supported platform/toolchain matrix |
-| Automated CI/testing | Linux GCC/Clang CTest and installed UI Toolkit headless consumer verified in GitHub Actions | Add non-Linux verification and wider negative tests |
-| Working application | Experimental SQLite catalog CLI; optional headless TableView preview | Actual graphical host and full M3 acceptance |
+| Automated CI/testing | Linux GCC/Clang Debug/Release CTest and pinned installed Toolkit console consumer verified in GitHub Actions; optional native GTK4 desktop target also compiles in CI | Add Windows/MSVC CI, interactive desktop smoke tests and wider negative tests |
+| Working application | Experimental SQLite catalog CLI, optional headless TableView preview, and opt-in native Win32/GTK4 catalog browse/search prototype (not manually smoke-tested) | Native desktop smoke tests, book editing and full M3 acceptance |
 | Alpha/beta/stable release | None | Tagged release artifacts and acceptance evidence |
 
 ## 4. Milestone dependency overview
