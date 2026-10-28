@@ -8,6 +8,12 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Added — initial book entry and native-host verification (2026-10-28)
+- Toolkit-independent `BookEntryController` reuses `CatalogService::createBook()` for a one-copy native book-entry panel, preserving form values on failure.
+- Real SQLite create/reopen/rollback integration tests through the new presentation command adapter.
+- Optional native desktop `--smoke` startup mode, Linux Xvfb launch check, and Windows MSVC/Win32 build plus CTest workflow. Manual UI interaction and accessibility have not been verified.
+
+
 ### Added — experimental native catalog browser (2026-10-28)
 - Toolkit-neutral `CatalogBrowser` presentation state and CTest scenarios for refresh, selection ID stability, Unicode, stale/deleted results, duplicate identities and exception-safe search.
 - Opt-in native Win32/GTK4 desktop catalog prototype with search field/button, TableView, selection-driven read-only details and status/error feedback. This is **not a stable GUI release** and has not been manually smoke-tested.
