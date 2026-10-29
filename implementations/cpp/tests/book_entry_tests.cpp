@@ -1,4 +1,5 @@
 #include <harald/presentation/book_entry.hpp>
+#include <harald/presentation/copy_details_pager.hpp>
 
 #include <chrono>
 #include <filesystem>
@@ -28,6 +29,34 @@ bool rejected(Operation&& operation) {
 
 /** Verify that the copy editor handles arbitrarily many rows without native
  * widgets and cannot lose its selection or underflow when rows are deleted. */
+void testDetailsPaging() {
+    view::CopyDetailsPager pager;
+    CHECK(pager.pageCount(0) == 1);
+    CHECK(pager.pageCount(1) == 1);
+    CHECK(pager.pageCount(3) == 1);
+    CHECK(pager.pageCount(4) == 2);
+    CHECK(pager.pageCount(7) == 3);
+    CHECK(!pager.previous());
+    CHECK(!pager.next(0));
+    CHECK(!pager.next(3));
+    CHECK(pager.next(7));
+    CHECK(pager.page() == 1);
+    CHECK(pager.firstIndex() == 3);
+    CHECK(pager.next(7));
+    CHECK(pager.page() == 2);
+    CHECK(pager.firstIndex() == 6);
+    CHECK(!pager.next(7));
+    pager.clamp(4);
+    CHECK(pager.page() == 1);
+    CHECK(pager.firstIndex() == 3);
+    pager.clamp(0);
+    CHECK(pager.page() == 0);
+    CHECK(pager.previous() == false);
+    CHECK(pager.next(12));
+    pager.reset();
+    CHECK(pager.page() == 0);
+}
+
 void testCopyEditorNavigation() {
     view::BookCopyEditor editor;
     CHECK(editor.size() == 1);
@@ -188,6 +217,7 @@ void testBookEntryAndRollback() {
 int main() {
     try {
         testCopyEditorNavigation();
+        testDetailsPaging();
         testBookEntryAndRollback();
         std::cout << "HARALD multi-copy editor and SQLite integration tests passed\n";
         return 0;
