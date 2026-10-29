@@ -10,7 +10,7 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ### Added — multiple physical copies and details paging (2026-10-29)
 - Toolkit-independent `BookCopyEditor` tracks arbitrary unsaved copies, valid active indexes, Add/Remove navigation and reset without SQL or UI dependencies.
-- Native new-book form now saves any positive number of copies atomically using the existing service. Read-only detail pages cover every persisted copy (three per page).
+- Native new-book form now saves any positive number of copies atomically using the existing service. Read-only detail pages cover every persisted copy (three per page) using a separately unit-tested toolkit-neutral `CopyDetailsPager`.
 - SQLite/CTest regression coverage for 12-copy persistence, Unicode, duplicate inventory codes, rollback after a late conflicting copy and draft navigation. Small-window and real interactive GUI acceptance remain open.
 
 
