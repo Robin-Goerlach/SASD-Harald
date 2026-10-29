@@ -167,8 +167,8 @@ restores the previously entered values. **Add**, **Previous**, **Next** and
 aggregate. On failure, the form and its current unsaved copy remain available
 for correction.
 
-The read-only catalog detail pane now shows physical copies in **pages of
-three** with **< Copies** and **Copies >** navigation. No persisted copy is
+The read-only catalog detail pane uses the toolkit-neutral `CopyDetailsPager`
+to show physical copies in **pages of three** with **< Copies** and **Copies >** navigation. No persisted copy is
 silently hidden by a truncation indicator.
 
 The form uses a compact, partially responsive layout and still needs manual
