@@ -77,6 +77,11 @@ All fixture identifiers must be stable within a test run, and test data should b
 - A newly introduced profile does not modify unrelated edition fields.
 
 ### Inventory and physical sets
+- Three copies of one edition retain **independent physical condition and availability**; a return inspection of barcode B must not change A or C.
+- A damaged returned copy is blocked before it can be reloaned; an unchanged healthy sibling remains lendable.
+- An authorized, reasoned withdrawal of worn copy C affects only C; its identity/audit history remains, the edition and other copies survive, and available-copy counts exclude C.
+- A failed return-with-condition transaction rolls back loan closure, condition and availability together. An unauthorized withdrawal has no effects.
+- Condition history records timestamp, action, actor and reason without disclosing private inspection notes to public readers.
 - A six-disc set can be checked out as the intended unit.
 - Returns can record a missing disc without lying about complete inventory.
 - Location moves preserve history and do not change unrelated loan state.

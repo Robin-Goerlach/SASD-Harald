@@ -202,7 +202,7 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Music CDs, vinyl, tracks, albums, credits and labels.
 - [ ] Audio CDs and multi-disc audiobook sets with narrators and components.
 - [ ] Configurable yet validated media descriptors; typed core fields remain authoritative.
-- [ ] Locations, copy conditions, availability, ownership, acquisitions.
+- [ ] Locations, **independent physical condition per copy** (not per title/edition), availability, ownership, acquisitions.
 - [ ] Design for **classification notation / call number independently of physical location**; support user-entered DDC-like numbers and custom sorting once scoped (see ACQ/SHELF addendum).
 - [ ] Explicit copy-level barcodes and identification.
 - [ ] Multi-part set completeness checks.
@@ -241,7 +241,7 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Checkout/return/renewal with due-date calculation and policies.
 - [ ] Borrower records and role-aware workflows.
 - [ ] Simple holds/reservations and non-lendable item states.
-- [ ] Missing/damaged/lost item and incomplete-set handling.
+- [ ] Missing/damaged/lost item and incomplete-set handling; inspect and record the **identified copy's** physical condition on return and block unsafe copies atomically.
 - [ ] Idempotent or safely retryable requests where appropriate.
 - [ ] Database constraints and transaction boundaries guarding state changes.
 - [ ] Clearly documented history and privacy retention policies.
@@ -276,12 +276,12 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 ### M10 — Stocktaking, locations, and reporting (P10)
 
 - [ ] Barcode-driven inventory sessions, discrepancies, and reconciliation.
-- [ ] Moves and changes of item condition with history.
+- [ ] Moves and changes of **individual** item condition with audit history; authorize and record copy-level withdrawal without deleting the edition or unaffected copies.
 - [ ] Missing/damaged component reporting for sets.
 - [ ] Summaries by medium, location, availability and circulation.
 - [ ] Exportable reports with appropriate access filtering.
 
-**Gate:** Inventory can detect a missing copy and unexpected barcode without silently deleting either.
+**Gate:** Inventory can detect a missing copy and unexpected barcode without silently deleting either. A three-copy regression verifies: a damaged returned copy is blocked, a healthy sibling remains lendable, and a separately withdrawn worn copy no longer contributes to available stock while its history survives.
 
 ### M11 — Search, operations UI, and accessibility (P08)
 

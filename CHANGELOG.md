@@ -8,6 +8,10 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Clarified — per-copy condition, return inspection and withdrawal (2026-10-29)
+- Made the existing R1 requirements (BOK-005, LOC-001/002/005/009 and CIR-005/008/009) explicit: physical condition and withdrawal attach to each inventoried copy, not its book title or edition. Added multi-copy return, damage, withdrawal, rollback and authorization acceptance scenarios to the requirements, test strategy and roadmap. **Documentation only; no condition/status/return code is claimed.**
+
+
 ### Added — multiple physical copies and details paging (2026-10-29)
 - Toolkit-independent `BookCopyEditor` tracks arbitrary unsaved copies, valid active indexes, Add/Remove navigation and reset without SQL or UI dependencies.
 - Native new-book form now saves any positive number of copies atomically using the existing service. Read-only detail pages cover every persisted copy (three per page) using a separately unit-tested toolkit-neutral `CopyDetailsPager`.
