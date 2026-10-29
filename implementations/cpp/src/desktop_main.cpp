@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <thread>
 #include <utility>
@@ -208,8 +209,8 @@ int run(const std::string& database_path, bool smoke_test) {
         const Coordinate copy_heading_y = y_first + 4 * field_step;
         copy_position.arrange({16, copy_heading_y, std::max<Coordinate>(0, w - 32), 23});
 
-        // Copy commands reflow into two rows when horizontal space is scarce.
-        // The editor remains explicitly limited to readable-sized windows.
+        // Copy commands share one compact row. At extremely narrow widths,
+        // labels may truncate; a scrollable adaptive form is future work.
         const Coordinate nav_y = y_first + 6 * field_step + 33;
         const Coordinate nav_width = std::min<Coordinate>(
             132, std::max<Coordinate>(0, (w - 58) / 4));
@@ -420,6 +421,10 @@ int run(const std::string& database_path, bool smoke_test) {
     });
 
     save_button.setOnActivated([&] {
+        // A successful CatalogService call is a database commit boundary.
+        // Keep the new ID separately so an unrelated post-save UI failure
+        // cannot be misreported as "Book not saved" (and trigger duplicates).
+        std::optional<harald::Id> persisted_edition;
         try {
             // Make owned UTF-8 copies before passing any values to the
             // application layer. A rejected write leaves all fields intact.
@@ -429,7 +434,8 @@ int run(const std::string& database_path, bool smoke_test) {
                 std::string{edition_input.text()}, std::string{isbn_input.text()},
                 copy_editor.copies(),
             };
-            const harald::Id edition_id = entry.create(fields);
+            persisted_edition = entry.create(fields);
+            const harald::Id edition_id = *persisted_edition;
 
             // Once COMMIT succeeded, clear the search filter so the new book
             // will be visible even when the old query excluded its title.
@@ -454,7 +460,13 @@ int run(const std::string& database_path, bool smoke_test) {
             copy_editor.reset();
             showVisibleCopy();
         } catch (const std::exception& problem) {
-            status.setText(std::string{"Book not saved: "} + problem.what());
+            if (persisted_edition) {
+                status.setText("Book saved (edition " +
+                               std::to_string(*persisted_edition) +
+                               "), but UI refresh failed: " + problem.what());
+            } else {
+                status.setText(std::string{"Book not saved: "} + problem.what());
+            }
         }
     });
 
@@ -476,8 +488,18 @@ int run(const std::string& database_path, bool smoke_test) {
          * Under Xvfb this verifies the actual GTK/native host initializes,
          * queries SQLite and accepts a rendered frame. It does not establish
          * interactive mouse, keyboard, IME or visual accessibility quality.
+         *
+         * We render BOTH views and a second physical-copy draft page. This
+         * catches broken widget visibility/layout integration in CI without
+         * inserting any data or faking a user interaction test.
          */
-        std::cout << "HARALD native desktop startup smoke passed\n";
+        copy_editor.append();
+        showVisibleCopy();
+        showEditor(true);
+        present();
+        showEditor(false);
+        present();
+        std::cout << "HARALD native catalog and multi-copy editor smoke passed\n";
         return EXIT_SUCCESS;
     }
 
