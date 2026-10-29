@@ -18,7 +18,11 @@ The feature research underpinning it is archived at [docs/research](../research/
 
 **Status:** proposed details, not an accepted release commitment and not implemented. In the user's request a further second feature was explicitly postponed; the addendum does **not** guess what it is.
 
-The original Pflichtenheft below remains unchanged to preserve provenance. The additions require prioritization and integration into a future reviewed revision.
+## Proposed self-service circulation addendum (2026-10-29)
+
+[HARALD-REQ-ADD-002 — Self-service checkout and return](SELF_SERVICE_CIRCULATION.md) records the new request for reader-operated loans and returns (SSC-001–SSC-012). It explicitly distinguishes an authenticated checkout, a return announcement, verified physical intake and completed return/condition inspection. The proposal recommends R2 after M6/M7 but does **not** silently change the R1 baseline. **No implementation is claimed.**
+
+The original Pflichtenheft remains the historical source baseline; proposed addenda require prioritization and integration into a future approved revision.
 
 ## What changed after the original draft?
 
@@ -67,6 +71,7 @@ A future approved revision should be versioned (for example, HARALD-REQ-001), re
 
 - [Original full Pflichtenheft](Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md)
 - [New acquisition and classification addendum](ACQUISITIONS_AND_SHELVING.md)
+- [Proposed self-service checkout and return addendum](SELF_SERVICE_CIRCULATION.md)
 - [Research baseline — 24 programs](../research/README.md)
 - [Architecture](../architecture/ARCHITECTURE.md)
 - [Roadmap](../../ROADMAP.md)

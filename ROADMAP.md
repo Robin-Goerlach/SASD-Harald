@@ -248,6 +248,8 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 
 **Gate:** Two simultaneous checkout attempts for **the same physical copy** produce at most one active loan; rollback on failure preserves correct availability.
 
+**Future self-service dependency (new requirement proposal):** [HARALD-REQ-ADD-002](docs/requirements/SELF_SERVICE_CIRCULATION.md) requests borrower-operated checkout and return (SSC-001–SSC-012). Build and verify the **staff** circulation service and identity/authorization first. An on-site kiosk, mobile client, or online portal must reuse the same transactional application use cases; a barcode known from afar is not evidence of legitimate handover, and an online return click is not a verified physical return. Provisional **R2**, not added to the R1 release gate without maintainer approval.
+
 ### M8 — Digital storage and rights (P07)
 
 - [ ] Store metadata and approved digital content separately.
