@@ -1,6 +1,7 @@
 #include <harald/catalog.hpp>
 #include <harald/presentation/catalog_browser.hpp>
 #include <harald/presentation/book_entry.hpp>
+#include <harald/presentation/copy_details_pager.hpp>
 
 #if defined(_WIN32)
 #  include <sasd/ui/native/win32_backend.hpp>
@@ -103,8 +104,7 @@ int run(const std::string& database_path, bool smoke_test) {
 
     // The detail view is a PAGE over BookDetails::copies, never a truncated
     // list. Every copy remains reachable without SQL or native widgets here.
-    std::size_t details_copy_page = 0;
-    constexpr std::size_t kCopiesPerPage = 3;
+    harald::presentation::CopyDetailsPager details_pager;
     auto& status = window.emplace<Label>("Ready");
 
     /*
@@ -255,12 +255,11 @@ int run(const std::string& database_path, bool smoke_test) {
          * the third visible copy to show "...more"; this one never hides a
          * persisted copy. Page state is re-clamped after every refresh.
          */
-        const std::size_t pages = std::max<std::size_t>(
-            1, (details->copies.size() + kCopiesPerPage - 1) / kCopiesPerPage);
-        details_copy_page = std::min(details_copy_page, pages - 1);
-        const std::size_t offset = details_copy_page * kCopiesPerPage;
+        details_pager.clamp(details->copies.size());
+        const std::size_t pages = details_pager.pageCount(details->copies.size());
+        const std::size_t offset = details_pager.firstIndex();
         Label* lines[]{&copy_line_1, &copy_line_2, &copy_line_3};
-        for (std::size_t i = 0; i < kCopiesPerPage; ++i) {
+        for (std::size_t i = 0; i < harald::presentation::CopyDetailsPager::kPageSize; ++i) {
             if (offset + i < details->copies.size()) {
                 const auto& item = details->copies[offset + i];
                 lines[i]->setText(item.inventory_code + "  |  " + item.location);
@@ -268,24 +267,16 @@ int run(const std::string& database_path, bool smoke_test) {
                 lines[i]->setText("");
             }
         }
-        details_page.setText("Page " + std::to_string(details_copy_page + 1) +
+        details_page.setText("Page " + std::to_string(details_pager.page() + 1) +
                              " / " + std::to_string(pages));
     };
 
     details_previous.setOnActivated([&] {
-        if (details_copy_page > 0) {
-            --details_copy_page;
-            updateDetails();
-        }
+        if (details_pager.previous()) updateDetails();
     });
     details_next.setOnActivated([&] {
         if (const auto& details = browser.selectedDetails()) {
-            const auto pages = (details->copies.size() + kCopiesPerPage - 1) /
-                               kCopiesPerPage;
-            if (details_copy_page + 1 < pages) {
-                ++details_copy_page;
-                updateDetails();
-            }
+            if (details_pager.next(details->copies.size())) updateDetails();
         }
     });
 
@@ -302,7 +293,7 @@ int run(const std::string& database_path, bool smoke_test) {
         } else {
             browser.clearSelection();
         }
-        details_copy_page = 0;
+        details_pager.reset();
         updateDetails();
     });
     (void)subscription;
@@ -322,7 +313,7 @@ int run(const std::string& database_path, bool smoke_test) {
             if (const auto selected = browser.selectedRow()) {
                 (void)selection.select(*selected, 0);
             }
-            details_copy_page = 0;
+            details_pager.reset();
             updateDetails();
             status.setText(std::to_string(browser.projection().rowCount()) +
                            " edition(s) found; filter: " + std::string(browser.filter()));
