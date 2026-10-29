@@ -92,9 +92,9 @@ Win32/GTK4 host -> SASD UI widgets -> HARALD CatalogBrowser
                                         SqliteCatalog
 ```
 
-The optional native desktop uses SASD UI 0.2 `Window`, `TextField`, `Button`, `TableView`, `TableSelectionModel`, `RenderedPresentationSink`, and the public native Win32/GTK4 backends. It does not use a private toolkit header. Win32 is exported as an installed CMake target; GTK4 currently requires building toolkit sources in an explicitly named sibling directory. Neither enters the default build. Native input and layout still require physical desktop smoke testing; Linux CI will only compile this target and exercise headless tests.
+The optional native desktop uses SASD UI 0.2 `Window`, `TextField`, `Button`, `TableView`, `TableSelectionModel`, `RenderedPresentationSink`, and the public native Win32/GTK4 backends. It does not use a private toolkit header. Win32 is exported as an installed CMake target; GTK4 currently requires building toolkit sources in an explicitly named sibling directory. Neither enters the default build. Native input and layout still require physical desktop smoke testing; Linux CI compiles this target, runs headless tests and starts/render its initial browser and editor views under Xvfb.
 
-The first detail pane is read-only and intentionally limited to three copy lines, while the coordinator retains all `BookDetails` data. Do not mark full catalog UI, pagination, data migration or authorization as implemented.
+The detail pane is read-only and shows three physical copies **per page**; the toolkit-neutral `CopyDetailsPager` makes every stored copy reachable while the coordinator retains complete `BookDetails` data. This limited paging does not imply a finished catalog UI, data migration or authorization.
 
 
 ## Native book-create form and host startup verification (2026-10-28)
