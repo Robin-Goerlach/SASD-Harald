@@ -4,7 +4,7 @@
 
 ## Scope deliberately limited
 
-The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. The optional SASD UI Toolkit consumer now has a **console preview** and an **experimental native Win32/GTK4 window** for search, selection, details and one-copy book creation; neither is a stable release.
+The working increment implements a small slice of the larger domain: creating one **Work**, one **Edition**, and **two individual Physical Items** with distinct inventory codes and locations; finding editions; displaying their physical copies; and persisting/reopening the catalog via SQLite. A command-line host is available. The optional SASD UI Toolkit consumer now has a **console preview** and an **experimental native Win32/GTK4 window** for search, selection, details and variable-length physical-copy book creation; neither is a stable release.
 
 This slice verifies layer boundaries before adding borrowing, media-specific metadata, procurement, classification or remote backends.
 
@@ -103,6 +103,32 @@ The first detail pane is read-only and intentionally limited to three copy lines
 
 `desktop_main.cpp` switches between catalog browsing and an inline book-create form by changing visibility of semantic SASD UI widgets. Save commits data before the form fields are cleared, then searches without a filter and selects the returned edition by ID; Cancel never calls the application layer. Failure retains all entered text, prevents a false success notification and preserves the existing catalog snapshot where possible. This design intentionally avoids a second validation rule set inside the UI.
 
-The first form has exactly one physical copy. It does **not** implement edits, deletion, a variable number of copies, zero-copy/digital items, ISBN checksum validation, or permissions. The normal catalog build stays toolkit-independent.
+The updated form keeps any number of unsaved physical copies via a toolkit-free `BookCopyEditor`. It does **not** implement persisted edition edits/deletion, zero-copy/digital items, ISBN checksum validation, or permissions. The normal catalog build stays toolkit-independent.
 
 `--smoke` starts the native desktop host, builds the initial table and renders one frame, then exits. Linux CI runs this under Xvfb; the new Windows CI job builds with MSVC and runs headless SQLite tests. Neither proves interactive mouse, keyboard, IME, accessiblity or visual appearance. A real desktop smoke checklist remains necessary.
+
+## Paging and multi-copy draft ownership (2026-10-29)
+
+The domain service has always accepted `BookDraft::copies` as a vector.
+HARALD now exposes that capability through the native editor. The new
+`BookEntryFields` DTO contains owned bibliographic strings plus a
+`std::vector<CopyDraft>` (no SQL/Toolkit dependency). A separate
+`BookCopyEditor` models the active unsaved physical copy, add/remove,
+navigation and reset. Its invariant is a nonempty list with a valid selection;
+the sole remaining draft may be empty **until Save**. Validation is not
+duplicated: `CatalogService` trims every row and rejects missing fields or
+duplicate codes in the draft; the SQLite transaction additionally rejects
+codes already persisted anywhere else.
+
+For navigation, the host saves the active TextFields into the editor before
+changing indexes, then loads the newly selected row. On Save, it sends the
+complete draft once through `BookEntryController`. On failure, the current
+row and bibliographic form inputs remain unchanged. The read-only details
+pane pages through all persisted copies in sets of three; the presentation
+state is reset after a new book/edition selection. This introduces **no
+schema migration**.
+
+The GUI layout compresses field spacing as height decreases but is not yet
+a general responsive or scrollable form. Physical Windows/GTK interactive
+checks, especially Unicode/IME, keyboard focus and resize at small sizes,
+remain mandatory before a release.
