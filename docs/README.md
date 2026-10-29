@@ -18,8 +18,11 @@ Welcome to the project documentation for **HARALD**, an open-source multimedia l
 | C++ catalog prototype | [C++ implementation](../implementations/cpp/README.md) | Verified Linux CMake/SQLite catalog CLI and tests; desktop UI still missing |
 | Shared cross-language material | [shared](../shared/README.md) | Future contracts, fixture samples and conformance checks |
 | Decisions | [ADR index](architecture/adr/README.md) | Proposed/accepted decisions and decision template |
-| Requirements | [Requirements index](requirements/README.md) | Status notes and full 2026 German Pflichtenheft |
+| Lastenheft (German) | [HARALD Lastenheft](requirements/Lastenheft_HARALD_2026.md) | User needs for physical-copy condition, self-service, migration and acceptance |
+| Requirements | [Requirements index](requirements/README.md) | Status notes and historical 2026 German Pflichtenheft with labeled addenda |
 | New requirements | [Book acquisition and systematic shelving addendum](requirements/ACQUISITIONS_AND_SHELVING.md) | Future purchases, DDC-style shelfmarks, physical locations, test scenarios |
+| Proposed later self-service | [Self-service checkout and return](requirements/SELF_SERVICE_CIRCULATION.md) | Secure kiosk/web handoff, proven return intake, privacy and state transitions |
+| Migration from other products | [Foreign-system migration concept](requirements/MIGRATION_FROM_OTHER_SYSTEMS.md) | Source IDs, per-copy migration, dry-run, conflict reporting and cutover |
 | Research | [Research index](research/README.md) | Full 24-program feature catalog and F001–F110 |
 | Testing | [TEST_STRATEGY.md](testing/TEST_STRATEGY.md) | Golden fixtures, invariant tests, concurrency, security and acceptance evidence |
 | Operating HARALD | [OPERATIONS.md](operations/OPERATIONS.md) | Proposed backup/restore, upgrade, deployment and incident model |

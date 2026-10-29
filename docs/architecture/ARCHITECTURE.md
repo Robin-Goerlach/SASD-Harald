@@ -416,6 +416,8 @@ stateDiagram-v2
 
 **R1-MUSS:** Ein zweiter paralleler Checkout desselben Exemplars darf nie einen zweiten aktiven Loan-Datensatz erzeugen. Löschung historisch referenzierter Exemplare ist durch Archivierung oder kontrollierte fachliche Migration zu ersetzen.
 
+**HARALD-Abgleich 2026-10-29:** [Lastenheft LH-EX-01–05](../requirements/Lastenheft_HARALD_2026.md) bestätigt die bereits gewählte Identitätsgrenze: Der **physische Zustand** (Verschleiß, Defekt, Vollständigkeit, Prüfverlauf) gehört zum einzelnen `PhysicalItem` und ist von der **operativen Ausleihbarkeit** getrennt. Rückgabe mit Zustandsprüfung, gegebenenfalls Sperre und auditierter Einzelaussonderung braucht transaktionale Orchestrierung; Geschwisterexemplare dürfen nicht verändert werden. Neue Status- oder Historientabellen sind bislang **nicht** implementiert. [Detaillierte Bedingungen](../requirements/Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md).
+
 ## 8.3 Digital Asset Lifecycle
 
 `uploading → quarantine → ready / rejected / failed → restricted / archived`. Auf `ready` dürfen nur **validierte und tatsächlich gespeicherte** Assets gelangen. Bei abgebrochenen Vorgängen müssen zeitlich begrenzte temporäre Objekte automatisch auffindbar und kontrolliert aufräumbar sein.
@@ -428,6 +430,15 @@ stateDiagram-v2
 - **Query:** Eine berechtigungsgefilterte Abfrage ohne Fachzustandsänderung (`FindEditions`, `GetItemAvailability`, `ListCurrentLoans`).
 - **Port:** Kleine Schnittstelle, gegen die die Application-Schicht programmiert (`IItemRepository`, `IUnitOfWork`, `IClock`, `IAssetStore`).
 - **Adapter:** Konkrete Implementierung für SQLite, Dateisystem, HTTP, CSV oder spätere Dienste.
+
+### 9.1.1 Abgrenzung der späteren Self-Service- und Fremdsystemmigration (HARALD-Nachtrag 2026-10-29)
+
+Das [Lastenheft](../requirements/Lastenheft_HARALD_2026.md) fordert zusätzlich zwei spätere Einsatzfälle:
+
+- **Self-Service-Kanal:** Kiosk, ein möglicher mobiler/Web-Client und staff-gestützte UI benutzen **dieselben** autorisierten `Circulation`-Commands und synchronen Transaktionsinvarianten. Der authentifizierte Akteur/Member wird vertrauenswürdig abgeleitet. Eine Barcodeeingabe allein bestätigt weder den rechtmäßigen physischen Besitz noch eine reale Rückgabe. Eine Rückgabeankündigung, bestätigte Annahme und abgeschlossene Zustandssichtung können separate Zustände benötigen; angenommene, aber ungeprüfte Exemplare sind **nicht ausleihbar**. Die genaue Transaktions-/Zeitstempelsemantik ist vor Umsetzung zu spezifizieren. [SSC-Details](../requirements/SELF_SERVICE_CIRCULATION.md).
+- **Migration aus anderen Bibliothekssystemen:** Ein Quellformat-Adapter in `Infrastructure` liefert typisierte, **zunächst nur gestagte** Datensätze an `Exchange`; erst `Application` führt Identitäts-/Beziehungsvalidation, Konflikterkennung, Freigabe, sichere Batches und Quell-ID-Crosswalks durch. `Domain` kennt weder Koha/MARC noch CSV. Eine Edition mit mehreren Exemplaren erzeugt **mehrere identifizierbare physische Items**. Benutzer/aktive Leihen nur über gesonderte autorisierte Verfahren. [MIG-Details](../requirements/MIGRATION_FROM_OTHER_SYSTEMS.md).
+
+Beide Themen sind **Anforderungs-/Architekturerweiterungen**, keine Behauptung bereits implementierter REST-Endpoints, Statusmodelle oder Adapter. Das vorgeschlagene Backend-[ADR-0004](adr/0004-configurable-persistence-and-remote-api.md) wird dadurch nicht freigegeben oder verändert.
 
 ## 9.2 Beispiel: Checkout Command
 

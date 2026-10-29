@@ -9,6 +9,8 @@
 **Grundlage:** `Open_Source_Bibliotheksverwaltung_Vollstaendiger_Funktionskatalog_2026.md`, Version 2.0 vom 17.10.2026, mit 24 Programmporträts und dem Prüfkatalog F001–F110.  
 **Zweck:** Entwurf eines **neuen, eigenständigen, frei lizenzierten Programms** für die integrierte Verwaltung physischer und digitaler Medien. Dies ist **kein** Pflichtenheft für die Weiterentwicklung eines der 24 Fremdprodukte.
 
+> **HARALD-Nachtrag vom 29.10.2026 (noch nicht formal freigegeben):** Für den inzwischen festgelegten Projektnamen HARALD existiert jetzt ein [eigenständiges Lastenheft](Lastenheft_HARALD_2026.md) (HARALD-LH-001). Die hier dokumentierten ursprünglichen Sollanforderungen werden **nicht** rückwirkend in neue Releasezusagen umgewandelt. Bereits konkretisierte individuelle Exemplarzustände sowie die separaten [Self-Service-](SELF_SERVICE_CIRCULATION.md) und [Fremdsystemmigrationsanforderungen](MIGRATION_FROM_OTHER_SYSTEMS.md) werden in den Abschnitten 7.8, 7.9 und 7.12 nachvollziehbar zugeordnet. Die historisch im Dokument genannten alten Projekt- und Entscheidungsstände bleiben als Quellenstand erkennbar.
+
 > **Verbindlichkeit:** Dieses Dokument übersetzt den vorhandenen Funktionskatalog in eine *vorgeschlagene* umsetzbare Lösung. Produktname, Trägerschaft, endgültige Lizenz, Programmiersprache, Teamgröße und Kosten wurden vom Auftraggeber noch nicht festgelegt. Deshalb sind die betreffenden Entscheidungen ausdrücklich als **Planungsannahme**, **Architekturentscheidung (ADR)** oder **offener Freigabepunkt** markiert; sie dürfen nicht stillschweigend als erteilter Auftrag gelten. Der Entwurf ist auf systematische Umsetzung, Testbarkeit und spätere Erweiterung ausgelegt.
 
 ---
@@ -44,7 +46,7 @@
 ## 1.1 Dokumentenhierarchie
 
 - **Funktionskatalog:** Beschreibt Funktionen existierender Programme; ist Quelle und Ideensammlung, *kein* bestätigter Kundenauftrag.
-- **Lastenheft:** Würde die vom Auftraggeber ausdrücklich gewünschten Ziele, Rahmenbedingungen und Prioritäten festlegen; liegt hier nicht gesondert vor.
+- **Lastenheft:** Würde die vom Auftraggeber ausdrücklich gewünschten Ziele, Rahmenbedingungen und Prioritäten festlegen; lag **zum ursprünglichen Dokumentstand (17.10.2026)** nicht gesondert vor. **HARALD-Nachtrag:** Das [Lastenheft HARALD vom 29.10.2026](Lastenheft_HARALD_2026.md) bildet inzwischen die konkret geäußerten Nutzerbedarfe als vorgeschlagenen, noch zu genehmigenden Stand ab.
 - **Dieses Pflichtenheft:** Legt die **vorgeschlagene fachliche Umsetzung**, den Soll-Funktionsumfang, das Datenmodell, die Schnittstellen und die Verifikation fest.
 - **Architekturentscheidungen (ADRs):** Halten spätere bindende technische Beschlüsse mit Gründen, Alternativen und Folgen fest.
 - **Test- und Abnahmeprotokoll:** Beweist gegen konkrete, versionierte Anforderungen, was implementiert wurde.
@@ -472,6 +474,20 @@ Mehrere **physisch identische Bücher derselben Ausgabe** bleiben fachlich **get
 
 **Kritische Umsetzung:** Checkout/Check-in, Vormerkungszuweisung und Verlängerung müssen **transaktionssicher** sein. Der Status der Ausgabe wird nicht als manipulierbarer Zähler geführt; „verfügbare Exemplare“ wird aus Exemplarstatus und aktiven Vorgängen ermittelt oder transaktionssicher materialisiert. Wiederholte Netzwerk-/Scannereingaben sind durch **Idempotenzschlüssel** oder semantische Konflikterkennung zu behandeln.
 
+### HARALD-Nachtrag 2026-10-29: Online-Checkout, Self-Check-in und Selbstbedienung (vorgeschlagen)
+
+**Bedarf:** [Lastenheft LH-SS-01–05](Lastenheft_HARALD_2026.md) sieht Selbst-Ausleihe und Selbst-Rückgabe ohne unmittelbar anwesendes Personal **in einer späteren Version** vor. Die vollständigen fachlich-technischen Anforderungen stehen unter [SSC-001–012 / SSC-AT-01–10](SELF_SERVICE_CIRCULATION.md). Sie sind **R2-Kandidaten**, keine stillschweigend neu freigegebenen R1-MUSS-Anforderungen.
+
+- **Self-Checkout:** Kiosk-/Web-/Mobilclients dürfen ein konkretes inventarisiertes Exemplar nur für ein authentifiziertes berechtigtes Mitglied und nach einer glaubwürdigen Übergabe-/Übernahmebedingung verleihen. ISBN und Kenntnis eines Barcodes allein sind keine Legitimation.
+- **Self-Check-in:** Rückgabeankündigung, belegte physische Annahme und abgeschlossene Zustandskontrolle sind fachlich getrennte Ereignisse. Ein Webklick allein beendet keine reale physische Ausleihe; ein angenommenes, noch nicht geprüftes Medium darf nicht erneut ausgeliehen werden.
+- **Einheitliche Regeln:** Die Clients teilen sich die bestehenden Anwendungsfälle/Transaktionen, rollen- und objektbezogene Berechtigungen und die Invariante „höchstens eine aktive Ausleihe je Exemplar“. Doppelscan/Timeout/Offlinebetrieb dürfen keine widersprüchlichen Buchungen verursachen.
+- **Quittung und Frist:** Der bestätigte Vorgang und der nachweisbare Annahmezeitpunkt müssen verständlich bezeichnet und nachvollziehbar gespeichert werden; nachträgliche Prüfung darf eine belegte fristgerechte Einlieferung nicht verfälschen.
+
+**Abnahme – Entwurf:** Ein Bibliotheksmitglied darf ein fremdes Mitglied nicht vertreten und ein nur aus der Ferne bekanntes Exemplar nicht verleihen. Zwei konkurrierende Ausleihen ergeben höchstens einen aktiven Loan. Eine reine Online-Rückgabeankündigung verändert die physische Verfügbarkeit nicht. Ein tatsächlich angenommenes beschädigtes Exemplar ist vor erneuter Ausgabe geschützt; andere Exemplare derselben Ausgabe bleiben unberührt.
+
+**Implementierungsstand:** Nicht implementiert. Die staff-gestützte Grundausleihe und die Berechtigungs-/Zustandsmodule sind Voraussetzungen.
+
+
 ## 7.10 Benutzer, Authentifizierung, Autorisierung und Datenschutzfunktionen
 
 | ID | Prio/Release | Umsetzungsvorgabe | Abnahmebedingung |
@@ -534,6 +550,21 @@ Mehrere **physisch identische Bücher derselben Ausgabe** bleiben fachlich **get
 | IMP-020 | M/R1 | Exporte enthalten **keine** Zugangsdaten und standardmäßig keine personenbezogenen Daten außerhalb des notwendigen, berechtigten Exportauftrags. | Gast-/Katalogexport enthält keine Leseradressen. |
 
 **Importstrategie:** Ingest → Syntaxprüfung → Normalisierung → Schema-/Domänenvalidierung → Dubletten-/Konfliktanalyse → Vorschau → autorisierte Übernahme → Audit. Jeder Schritt schreibt ein eindeutiges Ergebnis. Konnektoren gehören hinter Ports/Adapter-Schnittstellen, damit API-Änderungen eines Metadatenanbieters den bibliografischen Kern nicht destabilisieren.
+
+### HARALD-Nachtrag 2026-10-29: Umzug aus anderer Bibliothekssoftware (vorgeschlagen)
+
+**Bedarf:** Der Betreiber möchte seinen bisherigen Katalog einschließlich **aller einzelnen physischen Exemplare** ohne erneute Handeingabe nach HARALD übertragen können; siehe [Lastenheft LH-MI-01–07](Lastenheft_HARALD_2026.md). Dies konkretisiert die **bereits bestehenden R1-Anforderungen IMP-002–010**. Die gesonderte [Fremdsystemmigration MIG-001–012 / MIG-AT-01–12](MIGRATION_FROM_OTHER_SYSTEMS.md) definiert die Prüf- und Konfliktszenarien.
+
+- **Früher Basispfad (R1/M9):** versionierter HARALD-JSON-Austausch sowie dokumentierter CSV-/UTF-8-Import mit Feldmapping, Dry-run, Dubletten- und Verlustbericht, Quell-ID-Provenienz, transaktionalen Batches und Nachkontrolle.
+- **Objektidentität:** Werk → Ausgabe → **jedes Exemplar** samt Inventarnummer, Zustands-/Verfügbarkeitsinformationen und Standort. Fremde IDs sind quellenqualifiziert zuzuordnen; gleiche ISBN oder Titeltexte erlauben **keine** automatische Zusammenführung.
+- **Zusätzliche Daten:** Mitglieder, laufende Leihen, Vormerkungen und private digitale Assets werden nur bei fachlicher Eindeutigkeit, autorisierter Übernahme, Rechte-/Datenschutzprüfung und belegbarer Integrität migriert. Passwort-/Tokenübernahme und Phantom-Verfügbarkeit sind ausgeschlossen.
+- **Später:** geführter grafischer Assistent (R2-Kandidat) sowie quellspezifische Adapter und MARC21/MARCXML entsprechend IMP-016/019 (weiterhin R3-Kandidaten). Hersteller-/Systemkompatibilität darf nur nach echtem Test behauptet werden.
+- **Cutover:** Originaldaten bleiben bis zum verifizierten Zielvergleich gesichert; es muss ein kontrolliertes Umschalt-/Rollbackkonzept geben. **Fremdsystemmigration** ist nicht dasselbe wie HARALD-interner Backendwechsel, Schema-Upgrade oder Backup-Restore.
+
+**Abnahme – Entwurf:** Ein Import mit drei Exemplaren derselben Ausgabe erhält drei verschiedene Inventarobjekte. Dry-run schreibt keine Fachdaten; Barcodekollisionen werden angezeigt, ein fehlerhafter Batch rollt konsistent zurück, wiederholter Import erzeugt keine Dubletten, ein Vollständigkeits-/Verlustbericht ermöglicht eine kontrollierte Freigabe.
+
+**Implementierungsstand:** Der aktuelle C++/SQLite-Prototyp implementiert noch keinen produktiven CSV-/JSON-Import oder eine Fremdsystemmigration.
+
 
 ## 7.13 Inventur, Berichte, Erwerbungsgrunddaten
 

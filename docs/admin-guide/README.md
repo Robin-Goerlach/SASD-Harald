@@ -9,10 +9,13 @@
 - Optional LAN access: authentication, HTTPS, firewall, trusted proxy configuration.
 - Roles, resource permissions, member privacy and retention.
 - Library identity, physical locations, media policy, loan periods and limits.
+- Physical-item condition categories, inspection/audit policy, restricted-item release and reasoned **individual copy withdrawal**, not title deletion.
+- Optional future self-service configuration: handover/intake proof, kiosk session timeouts, disabled-by-default channels, receipt and inspection rules.
 - Database initialization, schema migrations and supported concurrency.
 - Protected asset storage, capacity planning and integrity scans.
 - Optional provider credentials, consent, caching and quotas.
-- Catalog export/import and safe migration from previous software.
+- Catalog export/import and safe migration from previous software: source format/version, owner-qualified source IDs, per-copy identity, field mapping, staging, dry-run, unknown-field/conflict/loss report, checkpointed reruns and verified cutover.
+- Any member and active-loan migration as a **separately authorized data-protection workflow**; no silent import of old login secrets or public exposure of personal data.
 - Consistent database **and** asset backups, retention and test restores.
 - Upgrade and rollback planning with version compatibility.
 - Logging, audit record access, troubleshooting and incident response.

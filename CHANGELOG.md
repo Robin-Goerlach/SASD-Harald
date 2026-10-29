@@ -8,6 +8,10 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Documentation — consolidated HARALD morning requirements (2026-10-29)
+- Created [HARALD-LH-001 Lastenheft](docs/requirements/Lastenheft_HARALD_2026.md) with traceable user-needs IDs LH-EX/LH-SS/LH-MI/LH-Q for individual item condition and withdrawal, later self-service checkout/check-in and foreign-library migration. Cross-referenced the Lastenheft in the historical German Pflichtenheft as labeled, non-approved HARALD addenda; aligned Roadmap, architecture, migration plan, testing strategy, user/admin outlines and documentation indexes. **Documentation only; no feature or release claim.**
+
+
 ### Proposed requirements — migration from other library systems (2026-10-29)
 - Added [HARALD-REQ-ADD-003](docs/requirements/MIGRATION_FROM_OTHER_SYSTEMS.md) describing a safe CSV-first migration process and future source-specific adapters (MIG-001–012, MIG-AT-01–12). It preserves Work/Edition/per-copy identities, source provenance, status, reviewable conflicts, private circulation data, rollback and cutover evidence. Clarified M9 and the test strategy; **documentation only, no importer code or supported source-system claim**.
 

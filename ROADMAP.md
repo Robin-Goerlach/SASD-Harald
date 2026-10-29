@@ -6,7 +6,7 @@
 > **Status:** Proposed; not a promise of release dates or completed functionality  
 > **Repository:** [Robin-Goerlach/SASD-Harald](https://github.com/Robin-Goerlach/SASD-Harald)  
 > **Architecture:** [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)  
-> **Requirements:** [docs/requirements/README.md](docs/requirements/README.md)  
+> **Requirements:** [docs/requirements/README.md](docs/requirements/README.md) and [HARALD Lastenheft](docs/requirements/Lastenheft_HARALD_2026.md) (proposed user needs recorded 2026-10-29)  
 > **Testing:** [docs/testing/TEST_STRATEGY.md](docs/testing/TEST_STRATEGY.md)
 
 HARALD is intended to become a free, open-source, offline-capable library and multimedia collection manager for physical and digital media. This roadmap turns the earlier requirements into **small, verifiable steps**. It does not imply that source code or releases already exist.
@@ -202,7 +202,7 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Music CDs, vinyl, tracks, albums, credits and labels.
 - [ ] Audio CDs and multi-disc audiobook sets with narrators and components.
 - [ ] Configurable yet validated media descriptors; typed core fields remain authoritative.
-- [ ] Locations, **independent physical condition per copy** (not per title/edition), availability, ownership, acquisitions.
+- [ ] Locations, **independent physical condition per copy** (not per title/edition), availability, ownership, acquisitions; link to Lastenheft **LH-EX-01–05**.
 - [ ] Design for **classification notation / call number independently of physical location**; support user-entered DDC-like numbers and custom sorting once scoped (see ACQ/SHELF addendum).
 - [ ] Explicit copy-level barcodes and identification.
 - [ ] Multi-part set completeness checks.
@@ -241,14 +241,14 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Checkout/return/renewal with due-date calculation and policies.
 - [ ] Borrower records and role-aware workflows.
 - [ ] Simple holds/reservations and non-lendable item states.
-- [ ] Missing/damaged/lost item and incomplete-set handling; inspect and record the **identified copy's** physical condition on return and block unsafe copies atomically.
+- [ ] Missing/damaged/lost item and incomplete-set handling; inspect and record the **identified copy's** physical condition on return and block unsafe copies atomically (**LH-EX-03**, CIR-009).
 - [ ] Idempotent or safely retryable requests where appropriate.
 - [ ] Database constraints and transaction boundaries guarding state changes.
 - [ ] Clearly documented history and privacy retention policies.
 
 **Gate:** Two simultaneous checkout attempts for **the same physical copy** produce at most one active loan; rollback on failure preserves correct availability.
 
-**Future self-service dependency (new requirement proposal):** [HARALD-REQ-ADD-002](docs/requirements/SELF_SERVICE_CIRCULATION.md) requests borrower-operated checkout and return (SSC-001–SSC-012). Build and verify the **staff** circulation service and identity/authorization first. An on-site kiosk, mobile client, or online portal must reuse the same transactional application use cases; a barcode known from afar is not evidence of legitimate handover, and an online return click is not a verified physical return. Provisional **R2**, not added to the R1 release gate without maintainer approval.
+**Future self-service dependency (Lastenheft LH-SS-01–05; new requirement proposal):** [HARALD-REQ-ADD-002](docs/requirements/SELF_SERVICE_CIRCULATION.md) requests borrower-operated checkout and return (SSC-001–SSC-012). Build and verify the **staff** circulation service and identity/authorization first. An on-site kiosk, mobile client, or online portal must reuse the same transactional application use cases; a barcode known from afar is not evidence of legitimate handover, and an online return click is not a verified physical return. Provisional **R2**, not added to the R1 release gate without maintainer approval.
 
 ### M8 — Digital storage and rights (P07)
 
@@ -272,7 +272,7 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Fault handling with no silent partial-loss success reports.
 - [ ] Import/export only information permitted by user permissions.
 - [ ] Regression sample data covering all core media types.
-- [ ] Validate an initial **foreign-system migration via mapped CSV/UTF-8** preserving Work → Edition → individual PhysicalItem records, with dry-run, conflicts, origin-qualified source IDs, and a documented cutover checklist. This refines existing IMP-002–010; it does not imply built-in Koha/FOLIO adapters.
+- [ ] Validate an initial **foreign-system migration via mapped CSV/UTF-8** preserving Work → Edition → individual PhysicalItem records, with dry-run, conflicts, origin-qualified source IDs, and a documented cutover checklist (**LH-MI-01–05**). This refines existing IMP-002–010; it does not imply built-in Koha/FOLIO adapters.
 
 **Gate:** Clean-install JSON round trip produces equivalent records, relationships, copy IDs, Unicode, and authorized asset references. Sensitive fields remain protected. An external-CSV sample with three copies of one edition is dry-run, imported and rerun without silently duplicating or merging copies; loss/conflict reports remain reviewable.
 
@@ -340,6 +340,10 @@ R2 work may be reordered according to real user feedback, but **must not weaken 
 
 **Gate:** Guests can see only approved public metadata; copying an internal URL or changing an item ID never exposes private records.
 
+**R2 candidate — self-service circulation (LH-SS-01–05):** Subject to explicit scope approval after M6/M7, provide a kiosk/authorized mobile client for checkout and a safe member-initiated return path. Require verified item handover/intake (not barcode knowledge or a remote return click), pending-inspection non-availability, protected kiosk sessions, idempotent transactional commands and SSC-AT regression tests. No committed public web server or RFID dependency. [Requirement detail](docs/requirements/SELF_SERVICE_CIRCULATION.md).
+
+**R2 candidate — guided external migration (LH-MI-06):** After M9 CSV/JSON semantics are proven, add a mapping/dry-run/conflict wizard and reusable source profiles. A **full member/active-loan migration** (LH-MI-07) remains a separate authorization/data-protection decision, not an automatic result of catalog import. [Requirement detail](docs/requirements/MIGRATION_FROM_OTHER_SYSTEMS.md).
+
 ### M15 — Digital reader, player and protocols (P14/P15)
 
 - [ ] EPUB/PDF reader architecture and supported-format checks.
@@ -377,6 +381,8 @@ Candidate epics include:
 - Device-oriented integrations, optional external media servers, and specialty catalog formats.
 
 **Entry criterion:** A concrete use case, ownership, security model, acceptance criteria, maintainability plan and supported deployment target exist. R3 is not an obligation to implement every candidate.
+
+**New need trace (2026-10-29, not implementation evidence):** [LH-EX-01–05](docs/requirements/Lastenheft_HARALD_2026.md) → M5/M7/M10; [LH-SS-01–05](docs/requirements/Lastenheft_HARALD_2026.md) → M6/M7 prerequisite and R2 candidate; [LH-MI-01–07](docs/requirements/Lastenheft_HARALD_2026.md) → M9 R1 basics, optional R2 wizard and R3 source adapters.
 
 ## 9. Work-package / requirement traceability
 
