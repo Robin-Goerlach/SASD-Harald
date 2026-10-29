@@ -53,7 +53,7 @@ cmake --build implementations/cpp/build-ui --parallel
 
 ### Optional native desktop catalog window (experimental, 28 October 2026)
 
-`harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection, read-only detail pane and a first single-copy book-entry form. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search/create prototype**, not a full create/edit/delete UI. Detail output shows at most three copy lines; no scrolling/pagination or accessibility acceptance is claimed.
+`harald_desktop` uses the **public** SASD UI Toolkit 0.2 interfaces for a native window, search field, search button, virtualized TableView, selection, read-only detail pane and a multi-copy book-entry form with Previous/Next/Add/Remove navigation. The view calls the new toolkit-neutral `CatalogBrowser`, which calls `CatalogService`; no SQL crosses the UI boundary. This is a catalog **browse/search/create prototype**, not a full create/edit/delete UI. The detail pane paginates all stored copies three at a time; manual keyboard/mouse accessibility acceptance is still open.
 
 On **Windows**, install a compatible SASD UI Toolkit 0.2 **Debug** CMake package with its Win32 native target (the published toolkit CMake build does this on Windows). Use the same x64 MSVC toolchain/triplet and configure **Debug only**: the 0.2 export does not provide a Release library when it was installed from a Debug-only build. Do not mix Debug and Release MSVC runtimes. Then run:
 
@@ -122,11 +122,11 @@ A SQLite file in this prototype is not a general cross-language interchange cont
 - IDs are SQLite-generated integers in this proof-of-concept; stable cross-backend IDs and migration policy remain an ADR decision.
 - No portable backup/restore or JSON migration exists; this prototype is **not suitable for irreplaceable library data**.
 - Concurrency and schema upgrades beyond v1 still need design and testing.
-- The console preview remains headless. The native window adds a first book-create panel (one copy per book), but no edit/delete, variable-copy form, accepted accessibility/IME behavior or detailed copy scrolling yet.
+- The console preview remains headless. The native window supports a variable number of new physical copies and read-only paged copy details, but has no edition edit/delete, accessible keyboard/IME acceptance or general-purpose responsive form scrolling.
 
 ## Next increment
 
-Manually smoke-test search, book creation, keyboard focus/text input and pointer selection on real Windows/Linux desktops. Then improve layout/resizing and add a variable-length physical-copy editor and domain error categories. Automated Windows compile/CTest and Linux Xvfb startup checks are configured in GitHub Actions, but they cannot replace manual accessibility/IME tests. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
+Manually smoke-test search, book creation, keyboard focus/text input and pointer selection on real Windows/Linux desktops. Then improve layout/resizing and add a edition editing/deletion, domain error categories and a scrollable responsive form. Automated Windows compile/CTest and Linux Xvfb startup checks are configured in GitHub Actions, but they cannot replace manual accessibility/IME tests. **Do not mark the full M3 milestone complete until export/restore, UI and platform validation are proven.**
 
 ### Catalog selection bridge (experimental, 28 October 2026)
 
@@ -141,9 +141,9 @@ The headless `harald_catalog_table_projection_tests` is enabled by the default C
 
 ### New book form and native smoke test (experimental, 28 October 2026)
 
-Click **New book** and enter title, author/creator, edition, optional ISBN, inventory code and physical location. A successful **Save book** calls the same `CatalogService::createBook()` used by the CLI, commits Work/Edition/Copy atomically, returns to the catalog, clears the search filter and attempts to select the new edition by typed ID. **Cancel** makes no database changes. On a validation/storage error, the editor remains open with its entered text intact. The form is deliberately limited to **one physical copy**; additional copies and zero-copy/digital-only editions require separate business requirements.
+Click **New book** and enter title, author/creator, edition, optional ISBN, inventory code and physical location. For any number of physical copies, enter an inventory code and location, then click **Add copy** to enter another. **Previous** and **Next** navigate the locally edited copies; **Remove copy** drops only the currently selected unsaved draft. The first copy cannot be removed, but it can be edited. A successful **Save book** calls the same `CatalogService::createBook()` used by the CLI and commits Work/Edition/**all** Copies atomically, returns to the catalog, clears the search filter and attempts to select the new edition by typed ID. **Cancel** makes no database changes. On a validation/storage error, the editor remains open with its entered text intact. The form requires **at least one physical copy**; zero-copy/digital-only editions require separate business requirements.
 
-Automated `harald_book_entry_tests` invokes the real SQLite adapter, including persistence after reopen and rollback on a duplicate inventory code. Linux CI also uses `xvfb-run` to start GTK4 and render an initial frame. This checks only native startup and renderer integration, **not interactive behavior**.
+Automated `harald_book_entry_tests` invokes the real SQLite adapter, including multi-copy persistence after reopen and rollback on a duplicate inventory code in the **last** submitted copy. A separate toolkit-free `BookCopyEditor` model is tested for Add/Previous/Next/Remove behavior. Linux CI also uses `xvfb-run` to start GTK4 and render an initial frame. This checks only native startup and renderer integration, **not interactive behavior**.
 
 Use a disposable test database for smoke tests:
 
@@ -153,3 +153,25 @@ xvfb-run -a ./build-harald-desktop/harald_desktop /tmp/harald-smoke.sqlite --smo
 ```
 
 Windows CI compiles the native Win32 target against a pinned installed Toolkit 0.2 package, with SQLite supplied through vcpkg, and executes the same four headless CTests. Successful CI does not imply that a person has verified the visual UI. **MSVC and Windows CI results should be checked for each commit before a merge.**
+
+### Copy paging and entry model (29 October 2026)
+
+The native window now supports **arbitrarily many** physical copies per new
+edition without allocating a variable number of SASD UI controls. The
+`BookCopyEditor` state model stores all unsaved `CopyDraft` values and the
+selected copy index. Before changing the index, the window copies the two
+currently visible text field values into the state model; switching back
+restores the previously entered values. **Add**, **Previous**, **Next** and
+**Remove** do not perform SQL or create incomplete editions. The final
+**Save book** calls the existing validated service once with the entire
+aggregate. On failure, the form and its current unsaved copy remain available
+for correction.
+
+The read-only catalog detail pane now shows physical copies in **pages of
+three** with **< Copies** and **Copies >** navigation. No persisted copy is
+silently hidden by a truncation indicator.
+
+The form uses a compact, partially responsive layout and still needs manual
+acceptance at narrow window sizes and with assistive technologies. Automated
+CI proves compilation, SQLite integration and native initial-frame startup,
+not that a real user can interact reliably with every widget.
