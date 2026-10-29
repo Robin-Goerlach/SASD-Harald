@@ -8,6 +8,10 @@ This file follows the spirit of [Keep a Changelog](https://keepachangelog.com/en
 
 ## [Unreleased]
 
+### Proposed requirements — self-service borrowing and return (2026-10-29)
+- Added [HARALD-REQ-ADD-002](docs/requirements/SELF_SERVICE_CIRCULATION.md) for member-operated kiosk/mobile checkout, secure intake and return workflows, with SSC-001–SSC-012 and negative acceptance scenarios. Return announcement is distinct from verified physical receipt/condition inspection; a remote barcode alone does not authorize borrowing. Roadmap and tests record dependency on M6/M7 and provisional R2 priority. **Documentation only; no self-service or circulation runtime exists yet.**
+
+
 ### Clarified — per-copy condition, return inspection and withdrawal (2026-10-29)
 - Made the existing R1 requirements (BOK-005, LOC-001/002/005/009 and CIR-005/008/009) explicit: physical condition and withdrawal attach to each inventoried copy, not its book title or edition. Added multi-copy return, damage, withdrawal, rollback and authorization acceptance scenarios to the requirements, test strategy and roadmap. **Documentation only; no condition/status/return code is claimed.**
 

@@ -97,6 +97,15 @@ All fixture identifiers must be stable within a test run, and test data should b
 - Duplicate/retried commands use explicit idempotency or conflict semantics.
 - Unauthorized staff/member can neither override a loan nor view unrelated borrower history.
 
+### Proposed self-service circulation (SSC-001–SSC-012; not implemented)
+- Authenticated kiosk/mobile borrower can check out only to their own eligible account and only when the deployment's handover policy is satisfied; knowing a barcode remotely is not sufficient.
+- Staff and self-service clients racing for the same inventory item produce at most one active loan, including on retry after timeout.
+- Clicking "returned" online without trusted physical receipt does **not** complete a loan, make the item lendable, or falsify a return date.
+- Confirmed intake with outstanding condition inspection remains non-lendable; completion reconciles loan, condition and holds without disturbing sibling copies.
+- Disconnected kiosks may only queue non-authoritative requests; eventual server validation must still detect conflicts.
+- Kiosk timeout must clear prior member data; no unauthorized lookup, member impersonation, duplicated return, or untrusted client-clock backdating succeeds.
+- See [SSC-AT-01–SSC-AT-10](../requirements/SELF_SERVICE_CIRCULATION.md) for explicit future tests. These are not counted as passing or R1 blockers until approved.
+
 ### Digital files and rights
 - No upload becomes publicly accessible by default.
 - Invalid type, disallowed size, path traversal and corrupt files fail safely.
