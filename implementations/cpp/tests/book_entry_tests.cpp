@@ -148,7 +148,10 @@ void testBookEntryAndRollback() {
             editor.editCurrent({"  MANY-001 ", " Shelf 1 "});
             for (int n = 2; n <= 12; ++n) {
                 editor.append();
-                // Fixed-width labels make insertion order easy to inspect.\n                const std::string code = std::string{"MANY-"} +\n                    (n < 10 ? "00" : "0") + std::to_string(n);\n                editor.editCurrent({code, "Shelf " + std::to_string(n)});
+                // Fixed-width labels make insertion order easy to inspect.
+                const std::string code = std::string{"MANY-"} +
+                    (n < 10 ? "00" : "0") + std::to_string(n);
+                editor.editCurrent({code, "Shelf " + std::to_string(n)});
             }
             CHECK(editor.size() == 12);
             many_id = entry.create({"  Kunst und Wissenschaft ", "Research Team",
