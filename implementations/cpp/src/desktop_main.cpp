@@ -65,6 +65,7 @@ int run(const std::string& database_path, bool smoke_test) {
     harald::CatalogService service{repository};
     harald::presentation::CatalogBrowser browser{service};
     harald::presentation::BookEntryController entry{service};
+    harald::presentation::BookCopyEditor copy_editor;
 
     DesktopConfig config{};
     config.title = "HARALD - Catalog (experimental)";
@@ -95,6 +96,14 @@ int run(const std::string& database_path, bool smoke_test) {
     auto& copy_line_1 = window.emplace<Label>("");
     auto& copy_line_2 = window.emplace<Label>("");
     auto& copy_line_3 = window.emplace<Label>("");
+    auto& details_previous = window.emplace<Button>("< Copies");
+    auto& details_page = window.emplace<Label>("");
+    auto& details_next = window.emplace<Button>("Copies >");
+
+    // The detail view is a PAGE over BookDetails::copies, never a truncated
+    // list. Every copy remains reachable without SQL or native widgets here.
+    std::size_t details_copy_page = 0;
+    constexpr std::size_t kCopiesPerPage = 3;
     auto& status = window.emplace<Label>("Ready");
 
     /*
@@ -105,7 +114,7 @@ int run(const std::string& database_path, bool smoke_test) {
      * The first book-entry use case intentionally creates ONE physical copy.
      * A variable-length copy editor will be a separate, tested milestone.
      */
-    auto& form_heading = window.emplace<Label>("New book with one physical copy");
+    auto& form_heading = window.emplace<Label>("New book with physical copies");
     auto& title_label = window.emplace<Label>("Title *");
     auto& title_input = window.emplace<TextField>();
     auto& creator_label = window.emplace<Label>("Author / creator *");
@@ -114,22 +123,29 @@ int run(const std::string& database_path, bool smoke_test) {
     auto& edition_input = window.emplace<TextField>();
     auto& isbn_label = window.emplace<Label>("ISBN (optional)");
     auto& isbn_input = window.emplace<TextField>();
+    auto& copy_position = window.emplace<Label>("Copy 1 / 1");
     auto& inventory_label = window.emplace<Label>("Inventory code *");
     auto& inventory_input = window.emplace<TextField>();
     auto& location_label = window.emplace<Label>("Location *");
     auto& location_input = window.emplace<TextField>();
+    auto& copy_previous = window.emplace<Button>("< Previous");
+    auto& copy_next = window.emplace<Button>("Next >");
+    auto& copy_add = window.emplace<Button>("Add copy");
+    auto& copy_remove = window.emplace<Button>("Remove copy");
     auto& save_button = window.emplace<Button>("Save book");
     auto& cancel_button = window.emplace<Button>("Cancel");
 
-    const std::array<Widget*, 13> browsing_controls{
+    const std::array<Widget*, 16> browsing_controls{
         &search_label, &search, &search_button, &new_book, &list_label, &table,
         &details_title, &details_edition, &details_isbn, &details_copies,
-        &copy_line_1, &copy_line_2, &copy_line_3};
-    const std::array<Widget*, 15> editing_controls{
+        &copy_line_1, &copy_line_2, &copy_line_3,
+        &details_previous, &details_page, &details_next};
+    const std::array<Widget*, 20> editing_controls{
         &form_heading, &title_label, &title_input, &creator_label, &creator_input,
         &edition_label, &edition_input, &isbn_label, &isbn_input,
-        &inventory_label, &inventory_input, &location_label, &location_input,
-        &save_button, &cancel_button};
+        &copy_position, &inventory_label, &inventory_input,
+        &location_label, &location_input, &copy_previous, &copy_next,
+        &copy_add, &copy_remove, &save_button, &cancel_button};
     bool editing = false;
     for (Widget* control : editing_controls) control->setVisible(false);
 
@@ -143,7 +159,9 @@ int run(const std::string& database_path, bool smoke_test) {
     const auto arrange = [&](Size size) {
         const Coordinate w = std::max<Coordinate>(0, size.width);
         const Coordinate h = std::max<Coordinate>(0, size.height);
-        const Coordinate table_height = std::max<Coordinate>(0, h - 350);
+        // Reserve a full detail pager beneath the table, including a
+        // persistent status line. Three physical copies are shown per page.
+        const Coordinate table_height = std::max<Coordinate>(0, h - 398);
         window.arrange({0, 0, w, h});
         heading.arrange({16, 12, std::max<Coordinate>(0, w - 32), 30});
         search_label.arrange({16, 60, 80, 30});
@@ -160,22 +178,47 @@ int run(const std::string& database_path, bool smoke_test) {
         copy_line_1.arrange({25, detail_y + 104, std::max<Coordinate>(0, w - 50), 25});
         copy_line_2.arrange({25, detail_y + 129, std::max<Coordinate>(0, w - 50), 25});
         copy_line_3.arrange({25, detail_y + 154, std::max<Coordinate>(0, w - 50), 25});
-        // Hidden controls must still have valid geometry across resize/mode
-        // changes. This prototype uses fixed row spacing; a proper FormLayout
-        // and scrolling require a subsequent user-facing design iteration.
-        form_heading.arrange({16, 62, std::max<Coordinate>(0, w - 32), 30});
+        details_previous.arrange({16, detail_y + 188, 126, 32});
+        details_page.arrange({158, detail_y + 188, 150, 28});
+        details_next.arrange({318, detail_y + 188, 126, 32});
+        /*
+         * Compact responsive editor layout: a single active copy uses the
+         * same two fields regardless of how many CopyDrafts exist. The list
+         * itself is stored in BookCopyEditor, NOT by creating Widget children
+         * for every copy. This avoids hard-coded upper copy limits.
+         *
+         * Smaller windows compress the vertical rhythm to 32px. Extremely
+         * tiny windows (< ~450px) still need a future ScrollView/FormLayout.
+         */
+        const Coordinate field_step = std::clamp<Coordinate>((h - 350) / 6, 32, 52);
+        const Coordinate y_first = 103;
+        form_heading.arrange({16, 58, std::max<Coordinate>(0, w - 32), 30});
         const std::array<Label*, 6> form_labels{&title_label, &creator_label,
             &edition_label, &isbn_label, &inventory_label, &location_label};
         const std::array<TextField*, 6> form_inputs{&title_input, &creator_input,
             &edition_input, &isbn_input, &inventory_input, &location_input};
         for (std::size_t i = 0; i < form_labels.size(); ++i) {
-            const Coordinate y = 111 + static_cast<Coordinate>(i) * 52;
-            form_labels[i]->arrange({16, y, 170, 32});
+            const Coordinate y = i < 4
+                ? y_first + static_cast<Coordinate>(i) * field_step
+                : y_first + static_cast<Coordinate>(i) * field_step + 27;
+            form_labels[i]->arrange({16, y, 170, 30});
             form_inputs[i]->arrange({195, y,
-                                    std::max<Coordinate>(0, w - 216), 34});
+                                    std::max<Coordinate>(0, w - 216), 33});
         }
-        save_button.arrange({195, 444, 150, 39});
-        cancel_button.arrange({355, 444, 150, 39});
+        const Coordinate copy_heading_y = y_first + 4 * field_step;
+        copy_position.arrange({16, copy_heading_y, std::max<Coordinate>(0, w - 32), 23});
+
+        // Copy commands reflow into two rows when horizontal space is scarce.
+        // The editor remains explicitly limited to readable-sized windows.
+        const Coordinate nav_y = y_first + 6 * field_step + 33;
+        const Coordinate nav_width = std::min<Coordinate>(
+            132, std::max<Coordinate>(0, (w - 58) / 4));
+        copy_previous.arrange({16, nav_y, nav_width, 32});
+        copy_next.arrange({22 + nav_width, nav_y, nav_width, 32});
+        copy_add.arrange({28 + 2 * nav_width, nav_y, nav_width, 32});
+        copy_remove.arrange({34 + 3 * nav_width, nav_y, nav_width, 32});
+        save_button.arrange({16, nav_y + 44, 150, 36});
+        cancel_button.arrange({176, nav_y + 44, 150, 36});
         status.arrange({16, std::max<Coordinate>(0, h - 32),
                         std::max<Coordinate>(0, w - 32), 26});
 
@@ -195,6 +238,7 @@ int run(const std::string& database_path, bool smoke_test) {
             copy_line_1.setText("");
             copy_line_2.setText("");
             copy_line_3.setText("");
+            details_page.setText("");
             return;
         }
         const auto& book = details->book;
@@ -204,22 +248,45 @@ int run(const std::string& database_path, bool smoke_test) {
         details_isbn.setText("ISBN: " + (book.isbn.empty() ? "(not specified)" : book.isbn));
         details_copies.setText("Physical copies: " + std::to_string(details->copies.size()));
 
-        // This intentionally limited read-only detail pane displays the first
-        // three items. The controller retains ALL copies; later scrolling and
-        // a dedicated copy TableView can expose the rest without new SQL here.
+        /*
+         * A fixed set of three read-only labels represents a paged window
+         * over ALL owned physical copies. The previous prototype discarded
+         * the third visible copy to show "...more"; this one never hides a
+         * persisted copy. Page state is re-clamped after every refresh.
+         */
+        const std::size_t pages = std::max<std::size_t>(
+            1, (details->copies.size() + kCopiesPerPage - 1) / kCopiesPerPage);
+        details_copy_page = std::min(details_copy_page, pages - 1);
+        const std::size_t offset = details_copy_page * kCopiesPerPage;
         Label* lines[]{&copy_line_1, &copy_line_2, &copy_line_3};
-        for (std::size_t i = 0; i < 3; ++i) {
-            if (i < details->copies.size()) {
-                const auto& item = details->copies[i];
+        for (std::size_t i = 0; i < kCopiesPerPage; ++i) {
+            if (offset + i < details->copies.size()) {
+                const auto& item = details->copies[offset + i];
                 lines[i]->setText(item.inventory_code + "  |  " + item.location);
             } else {
                 lines[i]->setText("");
             }
         }
-        if (details->copies.size() > 3) {
-            copy_line_3.setText("... more copies (detail scrolling not yet implemented)");
-        }
+        details_page.setText("Page " + std::to_string(details_copy_page + 1) +
+                             " / " + std::to_string(pages));
     };
+
+    details_previous.setOnActivated([&] {
+        if (details_copy_page > 0) {
+            --details_copy_page;
+            updateDetails();
+        }
+    });
+    details_next.setOnActivated([&] {
+        if (const auto& details = browser.selectedDetails()) {
+            const auto pages = (details->copies.size() + kCopiesPerPage - 1) /
+                               kCopiesPerPage;
+            if (details_copy_page + 1 < pages) {
+                ++details_copy_page;
+                updateDetails();
+            }
+        }
+    });
 
     // Toolkit reset notifications clear positional selection. Suppress only
     // that transient notification while replacing the table; then reselect by
@@ -234,6 +301,7 @@ int run(const std::string& database_path, bool smoke_test) {
         } else {
             browser.clearSelection();
         }
+        details_copy_page = 0;
         updateDetails();
     });
     (void)subscription;
@@ -253,6 +321,7 @@ int run(const std::string& database_path, bool smoke_test) {
             if (const auto selected = browser.selectedRow()) {
                 (void)selection.select(*selected, 0);
             }
+            details_copy_page = 0;
             updateDetails();
             status.setText(std::to_string(browser.projection().rowCount()) +
                            " edition(s) found; filter: " + std::string(browser.filter()));
@@ -272,6 +341,51 @@ int run(const std::string& database_path, bool smoke_test) {
     (void)focus.requestFocus(search);
     arrange(backend.windowSize());
 
+    /*
+     * The copy navigator saves its currently edited fields BEFORE switching
+     * rows. No database operation happens during Add/Next/Previous/Remove.
+     * A validation error at Save leaves every draft and the active row intact.
+     */
+    const auto saveVisibleCopy = [&] {
+        copy_editor.editCurrent({std::string{inventory_input.text()},
+                                 std::string{location_input.text()}});
+    };
+    const auto showVisibleCopy = [&] {
+        inventory_input.setText(copy_editor.current().inventory_code);
+        location_input.setText(copy_editor.current().location);
+        copy_position.setText("Physical copy " +
+                              std::to_string(copy_editor.selectedIndex() + 1) +
+                              " / " + std::to_string(copy_editor.size()));
+    };
+    copy_previous.setOnActivated([&] {
+        saveVisibleCopy();
+        if (copy_editor.selectedIndex() > 0) {
+            (void)copy_editor.select(copy_editor.selectedIndex() - 1);
+            showVisibleCopy();
+        }
+    });
+    copy_next.setOnActivated([&] {
+        saveVisibleCopy();
+        if (copy_editor.select(copy_editor.selectedIndex() + 1)) {
+            showVisibleCopy();
+        }
+    });
+    copy_add.setOnActivated([&] {
+        saveVisibleCopy();
+        copy_editor.append();
+        showVisibleCopy();
+        (void)focus.requestFocus(inventory_input);
+        status.setText("New blank copy added to the draft (not saved yet).");
+    });
+    copy_remove.setOnActivated([&] {
+        if (!copy_editor.removeCurrent()) {
+            status.setText("At least one physical copy is required.");
+            return;
+        }
+        showVisibleCopy();
+        status.setText("Draft copy removed; no database change.");
+    });
+
     /**
      * Switching the visible view is strictly a presentation operation.
      * No transaction starts when the editor is opened or cancelled. Toolkit
@@ -287,10 +401,20 @@ int run(const std::string& database_path, bool smoke_test) {
     };
 
     new_book.setOnActivated([&] {
+        // Opening starts a NEW form. A cancelled form must not accidentally
+        // resurrect unsaved copies from the previous editing session.
+        copy_editor.reset();
+        title_input.setText("");
+        creator_input.setText("");
+        edition_input.setText("");
+        isbn_input.setText("");
+        showVisibleCopy();
         showEditor(true);
         status.setText("Fields marked * are required. Save or Cancel.");
     });
     cancel_button.setOnActivated([&] {
+        // Cancel is a presentation-only action; the untouched persisted
+        // catalog will be shown. The next New book resets the draft.
         showEditor(false);
         status.setText("Book entry cancelled; no data was written.");
     });
@@ -299,10 +423,11 @@ int run(const std::string& database_path, bool smoke_test) {
         try {
             // Make owned UTF-8 copies before passing any values to the
             // application layer. A rejected write leaves all fields intact.
+            saveVisibleCopy();
             const harald::presentation::BookEntryFields fields{
                 std::string{title_input.text()}, std::string{creator_input.text()},
                 std::string{edition_input.text()}, std::string{isbn_input.text()},
-                std::string{inventory_input.text()}, std::string{location_input.text()},
+                copy_editor.copies(),
             };
             const harald::Id edition_id = entry.create(fields);
 
@@ -326,8 +451,8 @@ int run(const std::string& database_path, bool smoke_test) {
             creator_input.setText("");
             edition_input.setText("");
             isbn_input.setText("");
-            inventory_input.setText("");
-            location_input.setText("");
+            copy_editor.reset();
+            showVisibleCopy();
         } catch (const std::exception& problem) {
             status.setText(std::string{"Book not saved: "} + problem.what());
         }
