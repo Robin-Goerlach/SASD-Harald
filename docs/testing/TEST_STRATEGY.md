@@ -124,6 +124,17 @@ All fixture identifiers must be stable within a test run, and test data should b
 - Round-trip export → clean install → import preserves relationships, identities and Unicode.
 - Unauthorized user export omits unauthorized borrower/asset data.
 
+### Moving from a foreign library management system (proposed MIG-001–012)
+- Import multiple physically identical editions/copies with independent item IDs, barcodes, conditions and locations; never collapse them by title or ISBN.
+- Keep source IDs origin-qualified and source-to-target mapping stable across reruns; the second identical import creates no additional copies.
+- Distinguish wrong edition matching, duplicate barcodes from different libraries, unknown fields and missing parent/item/borrower references; report all conflicts without destructive auto-merges.
+- An initial dry run has **zero persistent effects** and provides a loss/conflict report. A failed transactional batch leaves no partial work/edition/copy tree and a resumed job uses actual committed checkpoints.
+- Non-ASCII characters, newline/quote escapes, encoding errors, file limits and malformed paths are either preserved through documented decoding or rejected safely.
+- Import of members and active loans is a separate **authorized** scenario. Missing item/borrower mappings, duplicated active loans and status conflicts must fail closed.
+- Returnable, blocked, lost and withdrawn copies retain correct availability; import must not accidentally make damaged physical items lendable.
+- Verify final source/target counts, relationships and a protected cutover/rollback procedure; do not claim support for a named source system until tested against its real export/version.
+- See [MIG-AT-01–MIG-AT-12](../requirements/MIGRATION_FROM_OTHER_SYSTEMS.md); these are proposals, **not executed tests**.
+
 ### Search and external providers
 - Search never leaks restricted fields, titles or asset URLs to anonymous users.
 - Disabling all network providers does not block manual local catalog entry.

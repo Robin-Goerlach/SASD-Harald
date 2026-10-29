@@ -272,8 +272,11 @@ R1 must stand alone as a useful small-library product; all R1 MUST requirements 
 - [ ] Fault handling with no silent partial-loss success reports.
 - [ ] Import/export only information permitted by user permissions.
 - [ ] Regression sample data covering all core media types.
+- [ ] Validate an initial **foreign-system migration via mapped CSV/UTF-8** preserving Work → Edition → individual PhysicalItem records, with dry-run, conflicts, origin-qualified source IDs, and a documented cutover checklist. This refines existing IMP-002–010; it does not imply built-in Koha/FOLIO adapters.
 
-**Gate:** Clean-install JSON round trip produces equivalent records, relationships, copy IDs, Unicode, and authorized asset references. Sensitive fields remain protected.
+**Gate:** Clean-install JSON round trip produces equivalent records, relationships, copy IDs, Unicode, and authorized asset references. Sensitive fields remain protected. An external-CSV sample with three copies of one edition is dry-run, imported and rerun without silently duplicating or merging copies; loss/conflict reports remain reviewable.
+
+**Migration scope:** [HARALD-REQ-ADD-003](docs/requirements/MIGRATION_FROM_OTHER_SYSTEMS.md) distinguishes this **migration from a different library product** from HARALD backend-profile switching or schema upgrades. A guided wizard is an R2 candidate; MARC21/MARCXML/ISO-2709 and specific third-party ILS adapters remain R3 according to IMP-016/019, unless the maintainer explicitly changes scope. The separate [self-service checkout/return proposal](docs/requirements/SELF_SERVICE_CIRCULATION.md) remains a **later-version R2 candidate**, not part of the current import implementation.
 
 ### M10 — Stocktaking, locations, and reporting (P10)
 
