@@ -10,6 +10,8 @@
 
 This is the **complete original requirements draft** (document ID OMB-PFH-001) previously prepared for a generic open-source multimedia library. It contains detailed functions, acceptance criteria, identifiers, technical suggestions, 24 comparison programs, 110 traced source requirements and staged R0–R3 scope. It was copied here as a provenance-preserving baseline, **not rewritten or silently approved**.
 
+The additional [HARALD Lastenheft (HARALD-LH-001, 2026-10-29)](Lastenheft_HARALD_2026.md) is a **new proposed statement of user needs**, focusing on copy-specific condition, later self-service circulation and migration from other library software. This is distinct from the historical supplier-oriented Pflichtenheft. The original Pflichtenheft now also contains clearly marked **HARALD addenda** in the relevant chapters; the earlier source baseline has not been silently approved.
+
 The feature research underpinning it is archived at [docs/research](../research/README.md). The current project design is in [ARCHITECTURE.md](../architecture/ARCHITECTURE.md), and the delivery order is in [ROADMAP.md](../../ROADMAP.md).
 
 ## New requirements addendum (2026-10-17)
@@ -44,6 +46,7 @@ The original Pflichtenheft is the historical source baseline. An earlier clarifi
 ## Reading and traceability
 
 - **Feature identifiers F001–F110:** research-checklist entries in the catalog; see the historical requirements' traceability section.
+- **HARALD user-need IDs:** LH-EX-*, LH-SS-*, LH-MI-*, LH-Q-* (Lastenheft; traceable to technical requirements below).
 - **Requirement IDs:** CAT-*, LOC-*, VID-*, MUS-*, AUD-*, DIG-*, CIR-*, IAM-*, SEA-*, IMP-*, INV-*, SEC-*, UI-*, NFR-* and ADV-*.
 - **Acceptance tests:** AT-001 through AT-024, with R1 and later-stage distinctions.
 - **Work packages:** P00–P17, now mapped to **M0–M17+** in the English roadmap.
@@ -73,7 +76,8 @@ A future approved revision should be versioned (for example, HARALD-REQ-001), re
 
 ## Documents
 
-- [Original full Pflichtenheft](Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md)
+- [HARALD Lastenheft — user needs and priorities](Lastenheft_HARALD_2026.md)
+- [Historical Pflichtenheft with explicit HARALD addenda](Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md)
 - [New acquisition and classification addendum](ACQUISITIONS_AND_SHELVING.md)
 - [Proposed self-service checkout and return addendum](SELF_SERVICE_CIRCULATION.md)
 - [Proposed migration from other library systems addendum](MIGRATION_FROM_OTHER_SYSTEMS.md)

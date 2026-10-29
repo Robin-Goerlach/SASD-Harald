@@ -141,6 +141,17 @@ All fixture identifiers must be stable within a test run, and test data should b
 - Provider timeouts and malformed metadata do not corrupt local records.
 - Search indexes converge after documented mutation/restore processes.
 
+### Requirements from the 2026-10-29 HARALD Lastenheft (proposal)
+
+| User need | Verification baseline | Current evidence |
+| --- | --- | --- |
+| [LH-EX-01–05](../requirements/Lastenheft_HARALD_2026.md) | Individual copy IDs, state/condition separation, return check, withdrawal, audit and transaction rollback on a three-copy edition | Basic multiple-copy SQLite persistence exists; **condition/return/withdrawal remains unimplemented** |
+| [LH-SS-01–05](../requirements/Lastenheft_HARALD_2026.md) | [SSC-AT-01–10](../requirements/SELF_SERVICE_CIRCULATION.md): ownership/hand-over checks, pending return, double checkout, kiosk privacy | **Not implemented; R2 candidate** |
+| [LH-MI-01–07](../requirements/Lastenheft_HARALD_2026.md) | [MIG-AT-01–12](../requirements/MIGRATION_FROM_OTHER_SYSTEMS.md): full item-identity mapping, dry-run, rerun, conflict/loss report, allowed borrowers, safe cutover | **Not implemented** (neither importer nor migration suite) |
+| [LH-Q-01–06](../requirements/Lastenheft_HARALD_2026.md) | Authorization, security, data integrity, usability and roundtrip evidence per milestone | **No blanket compliance claim** |
+
+A proposed requirement is not a passed test. Release-gate checks remain those of the **previous approved/currently proposed release plan** until an explicit scope decision changes them. Future tests should record the Lastenheft ID, linked Pflichtenheft/addendum ID, fixture, command, environment and actual result.
+
 ## 6. Acceptance-test mapping
 
 The original requirements document names AT-001–AT-024. Its test descriptions are the **source of truth**, not the approximate grouping below.
