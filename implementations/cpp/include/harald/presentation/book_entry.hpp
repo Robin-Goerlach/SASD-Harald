@@ -2,49 +2,97 @@
 
 #include <harald/catalog.hpp>
 
+#include <cstddef>
 #include <string>
+#include <vector>
 
 namespace harald::presentation {
 
 /**
- * One editable book form, independent of SASD UI controls and SQL.
+ * Owned values entered in the "New book" desktop form.
  *
- * All fields are owned UTF-8 strings. The entry form's first increment
- * deliberately captures exactly ONE physical copy: creating a bare edition
- * without inventory is not permitted by the existing R0 CatalogService.
- * Additional copies and digital-only editions need separate future use cases.
+ * This DTO deliberately does not depend on a Widget, SQLite or the native
+ * window. An Edition may have any POSITIVE number of physical copies. Each
+ * CopyDraft has its own globally unique inventory code and a location.
+ * CatalogService remains the sole authority for validation and transactions.
  */
 struct BookEntryFields final {
     std::string title;
     std::string creator;
     std::string edition_label;
     std::string isbn;
-    std::string inventory_code;
-    std::string location;
+    std::vector<CopyDraft> copies;
 };
 
 /**
- * Presentation-facing command that adapts form fields to the existing use case.
+ * Toolkit-independent editor for a variable-length set of physical copies.
  *
- * The controller deliberately does NOT duplicate mandatory-field validation,
- * trimming, uniqueness checks or transaction logic. CatalogService owns those
- * business rules; its CatalogRepository port enforces atomic persistence.
+ * Instead of constructing unbounded native widgets, the desktop presents one
+ * copy at a time and pages through this owned collection. The UI first saves
+ * its two visible TextField values using editCurrent(), then changes the
+ * selection and loads current() into the same controls.
  *
- * The caller owns CatalogService for the lifetime of this controller.
- * Exceptions are propagated so the UI can preserve entered text and report
- * the failure without pretending a transaction succeeded.
+ * Invariants:
+ * - exactly one copy is selected at all times;
+ * - at least one draft row always exists (it may still be empty);
+ * - navigation/add/remove do NOT write to the database;
+ * - Save validates ALL drafts together through CatalogService.
+ *
+ * Removal of the last row is disallowed so the view can never dereference an
+ * empty collection. A newly opened form should call reset() to discard edits.
+ */
+class BookCopyEditor final {
+public:
+    BookCopyEditor() : copies_(1) {}
+
+    [[nodiscard]] std::size_t size() const noexcept { return copies_.size(); }
+    [[nodiscard]] std::size_t selectedIndex() const noexcept { return selected_; }
+    [[nodiscard]] const CopyDraft& current() const noexcept {
+        return copies_[selected_];
+    }
+    [[nodiscard]] const std::vector<CopyDraft>& copies() const noexcept {
+        return copies_;
+    }
+
+    /** Replace one draft; database validation occurs only at Save. */
+    void editCurrent(CopyDraft draft);
+
+    /** Select an existing row; invalid indexes do not change the state. */
+    [[nodiscard]] bool select(std::size_t index) noexcept;
+
+    /** Append a BLANK physical copy and make it the visible row. */
+    void append();
+
+    /** Remove the selected row unless it is the only remaining row. */
+    [[nodiscard]] bool removeCurrent();
+
+    /** Start an entirely fresh entry; no persistence operation is performed. */
+    void reset();
+
+private:
+    std::vector<CopyDraft> copies_;
+    std::size_t selected_ = 0;
+};
+
+/**
+ * Form command adapter. Input is copied to a domain BookDraft and forwarded to
+ * the existing service. It MUST NOT maintain a parallel validation rule set.
+ * The service normalizes fields and enforces duplicate-code checks; SQLite
+ * inserts Work, Edition and every Copy within one transaction.
+ *
+ * The caller owns CatalogService longer than the adapter.
  */
 class BookEntryController final {
 public:
     explicit BookEntryController(CatalogService& service) noexcept : service_{service} {}
 
     /**
-     * Creates a work, edition and one physical copy as one atomic use case.
+     * @returns Persisted edition ID, only after the transaction succeeded.
+     * @throws std::invalid_argument Invalid title/edition/copy input.
+     * @throws std::runtime_error Storage or uniqueness failure.
      *
-     * @param fields Owned user input from the desktop form.
-     * @returns Persisted edition identity for post-save selection.
-     * @throws std::invalid_argument On invalid bibliographic/copy data.
-     * @throws std::runtime_error On storage failure (e.g. duplicate barcode).
+     * The input DTO stays unchanged on failure, so a caller can show its
+     * previous form values and allow the user to correct them.
      */
     [[nodiscard]] Id create(const BookEntryFields& fields);
 
