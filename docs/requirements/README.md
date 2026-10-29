@@ -22,7 +22,11 @@ The feature research underpinning it is archived at [docs/research](../research/
 
 [HARALD-REQ-ADD-002 — Self-service checkout and return](SELF_SERVICE_CIRCULATION.md) records the new request for reader-operated loans and returns (SSC-001–SSC-012). It explicitly distinguishes an authenticated checkout, a return announcement, verified physical intake and completed return/condition inspection. The proposal recommends R2 after M6/M7 but does **not** silently change the R1 baseline. **No implementation is claimed.**
 
-The original Pflichtenheft remains the historical source baseline; proposed addenda require prioritization and integration into a future approved revision.
+## Proposed foreign-system migration addendum (2026-10-29)
+
+[HARALD-REQ-ADD-003 — Migrating existing collections from other library systems](MIGRATION_FROM_OTHER_SYSTEMS.md) specifies a safe, source-aware migration process, including per-copy identity, a preview/dry run, explicit conflict handling, source-ID crosswalks, rollback and acceptance checks (MIG-001–012; MIG-AT-01–12). It reuses existing R1 CSV/JSON requirements (IMP-002–010); system-specific adapters remain later scope under IMP-016/019. **No importer is implemented.**
+
+The original Pflichtenheft is the historical source baseline. An earlier clarification of per-copy condition/withdrawal was appended directly to that document. The new migration and self-service proposals are maintained separately; all proposed addenda require prioritization and integration into a future approved revision.
 
 ## What changed after the original draft?
 
@@ -72,6 +76,7 @@ A future approved revision should be versioned (for example, HARALD-REQ-001), re
 - [Original full Pflichtenheft](Pflichtenheft_Open_Source_Multimedia_Bibliotheksverwaltung_2026.md)
 - [New acquisition and classification addendum](ACQUISITIONS_AND_SHELVING.md)
 - [Proposed self-service checkout and return addendum](SELF_SERVICE_CIRCULATION.md)
+- [Proposed migration from other library systems addendum](MIGRATION_FROM_OTHER_SYSTEMS.md)
 - [Research baseline — 24 programs](../research/README.md)
 - [Architecture](../architecture/ARCHITECTURE.md)
 - [Roadmap](../../ROADMAP.md)
