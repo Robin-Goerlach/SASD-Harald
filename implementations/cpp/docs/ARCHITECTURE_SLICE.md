@@ -124,7 +124,8 @@ For navigation, the host saves the active TextFields into the editor before
 changing indexes, then loads the newly selected row. On Save, it sends the
 complete draft once through `BookEntryController`. On failure, the current
 row and bibliographic form inputs remain unchanged. The read-only details
-pane pages through all persisted copies in sets of three; the presentation
+pane delegates page boundaries and clamping to a separate `CopyDetailsPager`
+that is covered by default CTest; it pages through all persisted copies in sets of three; the presentation
 state is reset after a new book/edition selection. This introduces **no
 schema migration**.
 
