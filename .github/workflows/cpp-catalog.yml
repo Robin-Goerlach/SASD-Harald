@@ -1,5 +1,13 @@
 name: HARALD C++ catalog slice
 
+# A succession of documentation/code commits on one feature branch should not
+# leave dozens of obsolete full Windows and GTK builds queued. The latest push
+# or PR head alone is the relevant merge gate; different branches remain
+# independent.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     paths:
